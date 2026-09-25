@@ -3,9 +3,7 @@ name: Radar ofert logistyki
 on:
   schedule:
     # Godziny w UTC (w Polsce latem +2 h, zimą +1 h). GitHub potrafi opóźnić start o kilkanaście minut.
-    - cron: "20 5 * * *"    # rano: LinkedIn + SerpAPI
-    - cron: "20 10 * * *"   # południe: LinkedIn
-    - cron: "20 15 * * *"   # popołudnie: LinkedIn
+    - cron: "20 5 * * *"    # raz dziennie przed 8:00 w Polsce: LinkedIn + Google (SerpAPI)
   workflow_dispatch:
     inputs:
       serp:
@@ -34,7 +32,7 @@ jobs:
       - name: Zbierz oferty
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
-          RUN_SERP: ${{ (github.event_name == 'schedule' && github.event.schedule == '20 5 * * *') || (github.event_name == 'workflow_dispatch' && inputs.serp) }}
+          RUN_SERP: ${{ github.event_name == 'schedule' || inputs.serp }}
         run: python radar.py
 
       - name: Zapisz wyniki w repozytorium
