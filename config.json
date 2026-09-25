@@ -13,14 +13,16 @@
     "warehouse process specialist"
   ],
   "serpGoogleQueries": [
-    "site:pracuj.pl inurl:oferta (lean OR kaizen OR \"ciągłego doskonalenia\" OR \"optymalizacji procesów\" OR \"procesów logistycznych\") Warszawa",
-    "site:linkedin.com/jobs/view (\"continuous improvement\" OR lean OR \"process specialist\" OR \"logistics specialist\" OR \"procesów\") Warszawa",
-    "(site:pl.indeed.com OR site:praca.pl OR site:nofluffjobs.com OR site:justjoin.it) (logistyka OR lean OR \"procesów logistycznych\" OR \"planista\") Warszawa"
+    "site:pracuj.pl lean OR kaizen OR \"ciągłego doskonalenia\" OR \"optymalizacji procesów\" OR \"procesów logistycznych\" Warszawa",
+    "site:pl.linkedin.com/jobs/view logistyka OR logistics OR lean OR \"continuous improvement\" OR warehouse Warszawa",
+    "site:pl.indeed.com OR site:praca.pl OR site:nofluffjobs.com \"logistyki\" OR \"lean\" OR \"planista\" OR \"procesów\" Warszawa"
   ],
   "serpJobsQuery": "lean logistyka magazyn optymalizacja procesów",
   "includeTitle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|proces|process|planist|planner|planning|planowan|supply|łańcuch|lancuch|analityk|analyst|operations|operacj|inventory|zapas|excellence|value stream|strumie|shipping|receiving|fulfil|distribution|dystrybuc|kontrol|control tower|intralogist|\\bci\\b|opex",
-  "excludeTitle": "magazynier|operator wózka|operator wozka|kierowca|driver|kurier|spedyt|forwarder|sprzedaw|sales|handlow|account manager|intern\\b|internship|staż|staz|praktyk|sap .*consultant|developer|programista|księgow|accountant|lekarz|pielęgn",
+  "excludeTitle": "magazynier|operator wózka|operator wozka|kierowca|driver|kurier|spedyt|forwarder|sprzedaw|sales|handlow|account manager|intern\\b|internship|staż|staz|praktyk|sap .*consultant|developer|programista|księgow|accountant|lekarz|pielęgn|pracowni(k|czka)[^|]*magazyn|pracownik produkcji",
   "maxDetailsPerRun": 30,
   "keepDays": 14,
-  "listDays": 2
+  "listDays": 2,
+  "serpTbs": "qdr:w",
+  "includeTitleGoogle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|supply|łańcuch|lancuch|planist|planner|planowan|procesów|process|value stream|strumie|inventory|zapas|opex|excellence"
 }

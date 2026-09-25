@@ -152,29 +152,35 @@ def linkedin_details(jid_num):
 
 
 # ---------------------------------------------------------------- SerpAPI
-JUNK_URL = re.compile(
-    r"facebook\.com|gowork\.pl|jooble|adzuna|olx\.pl/praca/?$|"
-    r"pracuj\.pl/praca/(?!.*oferta,)|"                  # listy ofert pracuj.pl (bez numeru oferty)
-    r"linkedin\.com/jobs/(?!view/)|"                    # listy ofert LinkedIn
-    r"indeed\.com/(?!(viewjob|rc/clk|pagead/clk|m/viewjob|cmp/[^/]+/jobs/))|"
-    r"praca\.pl/(?!.*_\d+\.html)",                   # listy ofert praca.pl
+# Wyniki Google przyjmujemy tylko wtedy, gdy link prowadzi do pojedynczego ogłoszenia.
+OFFER_URL = re.compile(
+    r"pracuj\.pl/praca/.+,oferta,\d+"
+    r"|linkedin\.com/jobs/view/"
+    r"|indeed\.com/(viewjob|rc/clk|pagead/clk|m/viewjob)"
+    r"|praca\.pl/.+_\d+\.html"
+    r"|nofluffjobs\.com/(pl/)?job/"
+    r"|justjoin\.it/(job-offer|offers)/"
+    r"|theprotocol\.it/szczegoly/praca/"
+    r"|olx\.pl/oferta/praca/"
+    r"|(kariera|career|careers|jobs|praca)\.[a-z0-9.-]+/.*\d{3,}"
+    r"|/(kariera|careers?|jobs?|oferty-pracy|rekrutacja)/.*\d{3,}",
     re.I)
 
 
 def is_single_offer(item):
     """Odrzuca wyniki Google, które nie są pojedynczym ogłoszeniem (listy, grupy, agregatory)."""
-    return not JUNK_URL.search(item.get("link") or "")
+    return bool(OFFER_URL.search(item.get("link") or ""))
 
 
 def serp_call(params, key, gl="pl"):
     p = dict(params, api_key=key, hl="pl")
     if gl:
         p["gl"] = gl
-    code, body = http_get("https://serpapi.com/search.json?" + urllib.parse.urlencode(p), timeout=60)
+    code, body = http_get("https://serpapi.com/search.json?" + urllib.parse.urlencode(p), timeout=150)
     try:
         data = json.loads(body)
     except Exception:
-        data = {"error": f"HTTP {code}"}
+        data = {"error": f"HTTP {code} {body[:120]}".strip()}
     return data
 
 
@@ -183,10 +189,11 @@ def run_serp(cfg, key):
     items, errors = [], []
     for q in cfg.get("serpGoogleQueries", []):
         status["searches"] += 1
-        d = serp_call({"engine": "google", "q": q, "tbs": "qdr:d", "num": 20,
+        d = serp_call({"engine": "google", "q": q, "tbs": cfg.get("serpTbs", "qdr:d"), "num": 20,
                        "location": cfg["serpLocation"]}, key)
         if d.get("error"):
-            errors.append("Google: " + str(d["error"]))
+            if "hasn't returned any results" not in str(d["error"]):
+                errors.append("Google: " + str(d["error"]))
             continue
         for o in d.get("organic_results") or []:
             if not o.get("link"):
@@ -261,6 +268,7 @@ def main():
     seen = load_json(seen_path, {})
     inc = re.compile(cfg.get("includeTitle", "."), re.I)
     exc = re.compile(cfg.get("excludeTitle", "(?!x)x"), re.I)
+    inc_google = re.compile(cfg.get("includeTitleGoogle", cfg.get("includeTitle", ".")), re.I)
 
     status = {"runAt": NOW.isoformat(), "linkedin": {}, "serp": {"ran": False}}
 
@@ -316,7 +324,7 @@ def main():
             for it in sitems:
                 if exc.search(it["title"] or ""):
                     continue
-                if it["source"].startswith("Google (") and not inc.search((it["title"] or "") + " " + (it.get("snippet") or "")):
+                if it["source"].startswith("Google (") and not inc_google.search(it["title"] or ""):
                     continue
                 if it["id"] in seen:
                     seen[it["id"]]["lastSeen"] = NOW.isoformat()
@@ -336,7 +344,7 @@ def main():
     # --- porządki: usuń śmieciowe wyniki Google z wcześniejszych przebiegów
     for oid in list(seen):
         v = seen[oid]
-        if str(v.get("source", "")).startswith("Google (") and not is_single_offer(v):
+        if str(v.get("source", "")).startswith("Google (") and (not is_single_offer(v) or not inc_google.search(v.get("title") or "")):
             del seen[oid]
 
     # --- porządki: usuń stare wpisy i pliki
