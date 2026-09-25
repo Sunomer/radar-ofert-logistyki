@@ -1,0 +1,17 @@
+{
+ "linkedin": {
+  "details": 17,
+  "found": 90,
+  "matched": 17,
+  "new": 17,
+  "note": ""
+ },
+ "runAt": "2026-09-25T21:49:10+00:00",
+ "serp": {
+  "new": 13,
+  "note": "Google Jobs: Unsupported `pl` country - gl parameter.",
+  "ran": true,
+  "results": 13,
+  "searches": 4
+ }
+}
