@@ -1,0 +1,25 @@
+{
+  "location": "Warszawa",
+  "serpLocation": "Warsaw, Masovian Voivodeship, Poland",
+  "linkedinQueries": [
+    "optymalizacja procesów logistycznych",
+    "ciągłe doskonalenie logistyka",
+    "lean magazyn",
+    "kaizen",
+    "inżynier procesów logistycznych",
+    "analityk logistyki",
+    "planista logistyki",
+    "continuous improvement logistics",
+    "warehouse process specialist"
+  ],
+  "serpGoogleQueries": [
+    "(lean OR kaizen OR \"ciągłego doskonalenia\" OR \"continuous improvement\") (logistyka OR magazyn OR logistics OR warehouse) praca Warszawa",
+    "(\"optymalizacji procesów\" OR \"procesów logistycznych\" OR \"process engineer\") (logistyka OR magazyn) oferta pracy Warszawa"
+  ],
+  "serpJobsQuery": "lean logistyka magazyn optymalizacja procesów",
+  "includeTitle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|proces|process|planist|planner|planning|planowan|supply|łańcuch|lancuch|analityk|analyst|operations|operacj|inventory|zapas|excellence|value stream|strumie|shipping|receiving|fulfil|distribution|dystrybuc|kontrol|control tower|intralogist|\\bci\\b|opex",
+  "excludeTitle": "magazynier|operator wózka|operator wozka|kierowca|driver|kurier|spedyt|forwarder|sprzedaw|sales|handlow|account manager|intern\\b|internship|staż|staz|praktyk|sap .*consultant|developer|programista|księgow|accountant|lekarz|pielęgn",
+  "maxDetailsPerRun": 30,
+  "keepDays": 14,
+  "listDays": 3
+}
