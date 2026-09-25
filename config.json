@@ -14,12 +14,13 @@
   ],
   "serpGoogleQueries": [
     "(lean OR kaizen OR \"ciągłego doskonalenia\" OR \"continuous improvement\") (logistyka OR magazyn OR logistics OR warehouse) praca Warszawa",
-    "(\"optymalizacji procesów\" OR \"procesów logistycznych\" OR \"process engineer\") (logistyka OR magazyn) oferta pracy Warszawa"
+    "(\"optymalizacji procesów\" OR \"procesów logistycznych\" OR \"process engineer\") (logistyka OR magazyn) oferta pracy Warszawa",
+    "(site:pracuj.pl OR site:linkedin.com/jobs OR site:pl.indeed.com OR site:praca.pl) (lean OR logistyka OR \"warehouse\" OR \"procesów\") Warszawa"
   ],
   "serpJobsQuery": "lean logistyka magazyn optymalizacja procesów",
   "includeTitle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|proces|process|planist|planner|planning|planowan|supply|łańcuch|lancuch|analityk|analyst|operations|operacj|inventory|zapas|excellence|value stream|strumie|shipping|receiving|fulfil|distribution|dystrybuc|kontrol|control tower|intralogist|\\bci\\b|opex",
   "excludeTitle": "magazynier|operator wózka|operator wozka|kierowca|driver|kurier|spedyt|forwarder|sprzedaw|sales|handlow|account manager|intern\\b|internship|staż|staz|praktyk|sap .*consultant|developer|programista|księgow|accountant|lekarz|pielęgn",
   "maxDetailsPerRun": 30,
   "keepDays": 14,
-  "listDays": 3
+  "listDays": 2
 }

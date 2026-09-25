@@ -306,7 +306,7 @@ def main():
             sst["new"] = new
             status["serp"] = sst
     else:
-        status["serp"] = {"ran": False, "note": "SerpAPI uruchamiane tylko w porannym przebiegu."}
+        status["serp"] = {"ran": False, "note": "SerpAPI pominięte (ręczne uruchomienie bez zaznaczonej opcji SerpAPI)."}
 
     # --- porządki: usuń stare wpisy i pliki
     keep_after = NOW - dt.timedelta(days=int(cfg.get("keepDays", 14)))

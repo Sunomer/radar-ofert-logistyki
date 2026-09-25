@@ -1,12 +1,12 @@
 # Radar ofert logistyki – zbieracz ofert na GitHubie
 
-Ten folder to gotowe repozytorium dla GitHuba. GitHub Actions (darmowe dla publicznych repozytoriów) trzy razy dziennie:
+Ten folder to gotowe repozytorium dla GitHuba. GitHub Actions (darmowe dla publicznych repozytoriów) raz dziennie, ok. 7:20 czasu polskiego latem (6:20 zimą):
 
 - sprawdza LinkedIn (oferty z ostatnich 24 h, bez logowania) i pobiera treść nowych ogłoszeń,
-- raz dziennie (rano) pyta SerpAPI: Google z filtrem 24 h + Google Jobs,
+- szuka ofert w Google przez SerpAPI: 3 zapytania Google z filtrem 24 h + Google Jobs,
 - zapisuje wyniki w katalogu `data/`.
 
-Potem zadanie Claude'a (w chmurze, bez Twojego komputera) czyta `data/kandydaci.md`, dokłada oferty z pracuj.pl, ocenia je według Twojego profilu i zapisuje w radarze.
+Potem o 8:00 zadanie Claude'a (w chmurze, bez Twojego komputera) czyta `data/kandydaci.md`, dokłada oferty z pracuj.pl, ocenia je według Twojego profilu i zapisuje w radarze.
 
 ## Konfiguracja (jednorazowo, ok. 10 minut)
 
@@ -30,8 +30,8 @@ Potem zadanie Claude'a (w chmurze, bez Twojego komputera) czyta `data/kandydaci.
 
 - Frazy, filtry tytułów i limity: `config.json` (edytujesz na GitHubie ikoną ołówka).
 - Godziny: `.github/workflows/radar.yml` (czas UTC).
-- Limit SerpAPI: 3 wyszukiwania dziennie ≈ 90 miesięcznie, czyli w granicach darmowego planu. Jeśli dodasz frazy
-  do `serpGoogleQueries`, każda to +1 wyszukiwanie dziennie.
+- Limit SerpAPI: 4 wyszukiwania dziennie (3 × Google + Google Jobs) ≈ 120 miesięcznie. Sprawdź limit swojego planu na serpapi.com;
+  każda dodatkowa fraza w `serpGoogleQueries` to +1 wyszukiwanie dziennie (ok. +30 miesięcznie).
 
 ## Uwagi
 
