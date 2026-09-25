@@ -1,20 +1,16 @@
 # Radar ofert logistyki – kandydaci
 
-Ostatni przebieg: 2026-09-25T21:54:20+00:00 (UTC)
-LinkedIn: znaleziono 90, pasujących tytułów 17, nowych 0, pobranych treści 0.
-SerpAPI: wyszukiwań 4, wyników 11, nowych 9. Google: Google hasn't returned any results for this query. | Google Jobs: HTTP 0
-Kandydaci z ostatnich 2 dni: 26
+Ostatni przebieg: 2026-09-25T21:58:59+00:00 (UTC)
+LinkedIn: znaleziono 90, pasujących tytułów 16, nowych 0, pobranych treści 0.
+SerpAPI: wyszukiwań 4, wyników 13, nowych 5. Google Jobs: We couldn't get valid results for this search. Please try again later.
+Kandydaci z ostatnich 2 dni: 22
 Treść ogłoszenia (gdy jest): plik oferty/<id>.md w tym samym katalogu.
 
-- linkedin-4470161175 | Data Business Analyst - Customer 360 & Graph Intelligence |  |  | opubl. 22 godziny temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://pl.linkedin.com/jobs/view/principal-data-business-analyst-customer-360-graph-intelligence-at-datamatics-technologies-4470161175
-- linkedin-4472001175 | Zastępca / Zastępczyni Inspektora Ochrony Danych |  |  | opubl. 10 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://pl.linkedin.com/jobs/view/zast%C4%99pca-zast%C4%99pczyni-inspektora-ochrony-danych-at-kpmg-poland-4472001175
-- google-2fc7f634ff | Transport i Logistyka Polska |  |  | opubl. 10 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://tlp.org.pl/
-- google-951d3586f2 | Logistyka - Plany zajęć |  |  | opubl. 5 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://www.upsl.edu.pl/studenci/plany-zajec/logistyka
-- google-db96e790f6 | logistyka - co znaczy? | definicja słowa | Słownik PWN |  |  | opubl. 11 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://sjp.pwn.pl/slowniki/logistyka.html
-- google-e959039118 | LOGISTYKA - studia 2026 | 74 uczelnie |  |  | opubl. 4 godziny temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://www.otouczelnie.pl/artykul/1018/Logistyka
-- google-1386bbb9e7 | LeanTrix | Zwiększamy zdolności organizacji - Lean, TWI, TOC |  |  | opubl. 11 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://leantrix.com/pl/
-- google-2a3088b6ea | Transport i Logistyka |  |  | opubl. 15 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://biznes.pap.pl/kategoria/transport-i-logistyka
-- google-8f91083953 | Rok Zjazd Forma studiów |  |  | opubl. 5 godzin temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:54 | treść: nie | https://www.upsl.edu.pl/content/download/89183/file/Logistyka%20SPS%20II%20niestacjonarne%2015.09.2026.pdf
+- pracuj-1005105431 | Specjalista ds. Optymalizacji Procesów (K/M) |  |  | opubl. 5 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/specjalista-ds-optymalizacji-procesow-k-m-warszawa,oferta,1005105431
+- pracuj-1005049818 | Oferta pracy Inżynier Planowania Procesów Produkcyjnych ... |  |  | opubl. 6 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/inzynier-planowania-procesow-produkcyjnych-manufacturing-planner-warszawa,oferta,1005049818?sug=oferta_bottom_rd_23
+- pracuj-1005112508 | Inżynier Procesów Lean - Knauf Interfer Aluminium Sp. z oo |  |  | opubl. 2 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/inzynier-procesow-lean-lean-manufacturing-m-k-opole,oferta,1005112508
+- linkedin-4470420542 | Avantor zatrudnia na stanowisko Process Safety Manager |  |  | opubl. 3 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://pl.linkedin.com/jobs/view/process-safety-manager-europe-at-avantor-4470420542
+- linkedin-4469879159 | Fortrea zatrudnia na stanowisko Epidemiologist Director w ... |  |  | opubl. 4 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://pl.linkedin.com/jobs/view/epidemiologist-director-at-fortrea-4469879159
 - linkedin-4442625683 | Specjalista ds. strumienia wartości (K/M) | TRUMPF w Polsce | Zielonka | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-25T21:49 | treść: tak | https://pl.linkedin.com/jobs/view/specjalista-ds-strumienia-warto%C5%9Bci-k-m-at-trumpf-w-polsce-4442625683
 - linkedin-4453135364 | Warehouse Supervisor | JD.COM | Warszawa | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-25T21:49 | treść: tak | https://pl.linkedin.com/jobs/view/warehouse-supervisor-at-jd-com-4453135364
 - linkedin-4457391427 | Regional Operations Manager (m/f/d) | Flix | Warszawa | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-25T21:49 | treść: tak | https://pl.linkedin.com/jobs/view/regional-operations-manager-m-f-d-at-flix-4457391427

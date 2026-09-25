@@ -2,17 +2,17 @@
  "linkedin": {
   "details": 0,
   "found": 90,
-  "matched": 17,
+  "matched": 16,
   "new": 0,
   "note": ""
  },
- "runAt": "2026-09-25T21:54:20+00:00",
+ "runAt": "2026-09-25T21:58:59+00:00",
  "serp": {
-  "new": 9,
-  "note": "Google: Google hasn't returned any results for this query. | Google Jobs: HTTP 0",
+  "new": 5,
+  "note": "Google Jobs: We couldn't get valid results for this search. Please try again later.",
   "ran": true,
-  "results": 11,
+  "results": 13,
   "searches": 4,
-  "skipped": 3
+  "skipped": 16
  }
 }
