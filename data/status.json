@@ -1,17 +1,18 @@
 {
  "linkedin": {
-  "details": 17,
+  "details": 0,
   "found": 90,
   "matched": 17,
-  "new": 17,
+  "new": 0,
   "note": ""
  },
- "runAt": "2026-09-25T21:49:10+00:00",
+ "runAt": "2026-09-25T21:54:20+00:00",
  "serp": {
-  "new": 13,
-  "note": "Google Jobs: Unsupported `pl` country - gl parameter.",
+  "new": 9,
+  "note": "Google: Google hasn't returned any results for this query. | Google Jobs: HTTP 0",
   "ran": true,
-  "results": 13,
-  "searches": 4
+  "results": 11,
+  "searches": 4,
+  "skipped": 3
  }
 }
