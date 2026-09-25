@@ -17,7 +17,7 @@
     "site:pl.linkedin.com/jobs/view logistyka OR logistics OR lean OR \"continuous improvement\" OR warehouse Warszawa",
     "site:pl.indeed.com OR site:praca.pl OR site:nofluffjobs.com \"logistyki\" OR \"lean\" OR \"planista\" OR \"procesów\" Warszawa"
   ],
-  "serpJobsQuery": "lean logistyka magazyn optymalizacja procesów",
+  "serpJobsQuery": "",
   "includeTitle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|proces|process|planist|planner|planning|planowan|supply|łańcuch|lancuch|analityk|analyst|operations|operacj|inventory|zapas|excellence|value stream|strumie|shipping|receiving|fulfil|distribution|dystrybuc|kontrol|control tower|intralogist|\\bci\\b|opex",
   "excludeTitle": "magazynier|operator wózka|operator wozka|kierowca|driver|kurier|spedyt|forwarder|sprzedaw|sales|handlow|account manager|intern\\b|internship|staż|staz|praktyk|sap .*consultant|developer|programista|księgow|accountant|lekarz|pielęgn|pracowni(k|czka)[^|]*magazyn|pracownik produkcji",
   "maxDetailsPerRun": 30,
