@@ -13,9 +13,9 @@
     "warehouse process specialist"
   ],
   "serpGoogleQueries": [
-    "(lean OR kaizen OR \"ciągłego doskonalenia\" OR \"continuous improvement\") (logistyka OR magazyn OR logistics OR warehouse) praca Warszawa",
-    "(\"optymalizacji procesów\" OR \"procesów logistycznych\" OR \"process engineer\") (logistyka OR magazyn) oferta pracy Warszawa",
-    "(site:pracuj.pl OR site:linkedin.com/jobs OR site:pl.indeed.com OR site:praca.pl) (lean OR logistyka OR \"warehouse\" OR \"procesów\") Warszawa"
+    "site:pracuj.pl inurl:oferta (lean OR kaizen OR \"ciągłego doskonalenia\" OR \"optymalizacji procesów\" OR \"procesów logistycznych\") Warszawa",
+    "site:linkedin.com/jobs/view (\"continuous improvement\" OR lean OR \"process specialist\" OR \"logistics specialist\" OR \"procesów\") Warszawa",
+    "(site:pl.indeed.com OR site:praca.pl OR site:nofluffjobs.com OR site:justjoin.it) (logistyka OR lean OR \"procesów logistycznych\" OR \"planista\") Warszawa"
   ],
   "serpJobsQuery": "lean logistyka magazyn optymalizacja procesów",
   "includeTitle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|proces|process|planist|planner|planning|planowan|supply|łańcuch|lancuch|analityk|analyst|operations|operacj|inventory|zapas|excellence|value stream|strumie|shipping|receiving|fulfil|distribution|dystrybuc|kontrol|control tower|intralogist|\\bci\\b|opex",

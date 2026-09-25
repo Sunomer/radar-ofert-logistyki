@@ -152,8 +152,24 @@ def linkedin_details(jid_num):
 
 
 # ---------------------------------------------------------------- SerpAPI
-def serp_call(params, key):
-    p = dict(params, api_key=key, hl="pl", gl="pl")
+JUNK_URL = re.compile(
+    r"facebook\.com|gowork\.pl|jooble|adzuna|olx\.pl/praca/?$|"
+    r"pracuj\.pl/praca/(?!.*oferta,)|"                  # listy ofert pracuj.pl (bez numeru oferty)
+    r"linkedin\.com/jobs/(?!view/)|"                    # listy ofert LinkedIn
+    r"indeed\.com/(?!(viewjob|rc/clk|pagead/clk|m/viewjob|cmp/[^/]+/jobs/))|"
+    r"praca\.pl/(?!.*_\d+\.html)",                   # listy ofert praca.pl
+    re.I)
+
+
+def is_single_offer(item):
+    """Odrzuca wyniki Google, które nie są pojedynczym ogłoszeniem (listy, grupy, agregatory)."""
+    return not JUNK_URL.search(item.get("link") or "")
+
+
+def serp_call(params, key, gl="pl"):
+    p = dict(params, api_key=key, hl="pl")
+    if gl:
+        p["gl"] = gl
     code, body = http_get("https://serpapi.com/search.json?" + urllib.parse.urlencode(p), timeout=60)
     try:
         data = json.loads(body)
@@ -175,17 +191,24 @@ def run_serp(cfg, key):
         for o in d.get("organic_results") or []:
             if not o.get("link"):
                 continue
-            items.append({
+            it = {
                 "id": id_from_link(o["link"], "google"),
                 "source": "Google (SerpAPI)", "query": q,
                 "title": o.get("title", ""), "company": "", "location": "",
                 "postedAt": o.get("date", ""), "salary": "", "link": o["link"],
                 "snippet": o.get("snippet", ""),
-            })
+            }
+            if is_single_offer(it):
+                items.append(it)
+            else:
+                status["skipped"] = status.get("skipped", 0) + 1
     jq = cfg.get("serpJobsQuery")
     if jq:
         status["searches"] += 1
-        d = serp_call({"engine": "google_jobs", "q": jq, "location": cfg["serpLocation"]}, key)
+        # Google Jobs nie obsługuje parametru gl=pl – kraj wynika z parametru location.
+        d = serp_call({"engine": "google_jobs", "q": jq, "location": cfg["serpLocation"]}, key, gl=None)
+        if d.get("error") and "hasn't returned any results" in str(d["error"]):
+            d = {}
         if d.get("error"):
             errors.append("Google Jobs: " + str(d["error"]))
         for j in d.get("jobs_results") or []:
@@ -293,6 +316,8 @@ def main():
             for it in sitems:
                 if exc.search(it["title"] or ""):
                     continue
+                if it["source"].startswith("Google (") and not inc.search((it["title"] or "") + " " + (it.get("snippet") or "")):
+                    continue
                 if it["id"] in seen:
                     seen[it["id"]]["lastSeen"] = NOW.isoformat()
                     continue
@@ -307,6 +332,12 @@ def main():
             status["serp"] = sst
     else:
         status["serp"] = {"ran": False, "note": "SerpAPI pominięte (ręczne uruchomienie bez zaznaczonej opcji SerpAPI)."}
+
+    # --- porządki: usuń śmieciowe wyniki Google z wcześniejszych przebiegów
+    for oid in list(seen):
+        v = seen[oid]
+        if str(v.get("source", "")).startswith("Google (") and not is_single_offer(v):
+            del seen[oid]
 
     # --- porządki: usuń stare wpisy i pliki
     keep_after = NOW - dt.timedelta(days=int(cfg.get("keepDays", 14)))
