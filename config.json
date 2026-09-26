@@ -25,14 +25,28 @@
       "analityk logistyki Warszawa"
     ],
     "google_queries": [
-      "\"ciągłego doskonalenia\" logistyka praca Warszawa",
-      "\"lean\" specjalista magazyn oferta pracy Warszawa"
+      "(site:praca.pl OR site:rocketjobs.pl OR site:pl.indeed.com OR site:olx.pl OR site:aplikuj.pl OR site:gowork.pl OR site:justjoin.it) (\"ciągłego doskonalenia\" OR lean OR kaizen OR \"continuous improvement\") logistyka Warszawa",
+      "(site:praca.pl OR site:rocketjobs.pl OR site:pl.indeed.com OR site:olx.pl OR site:aplikuj.pl OR site:gowork.pl OR site:justjoin.it) (\"optymalizacji procesów\" OR \"procesów magazynowych\" OR \"analityk logistyki\" OR \"planista logistyki\") Warszawa"
     ],
     "max_page_fetches": 10
   },
   "exclude_title_words": [
-    "magazynier", "operator wózka", "kierowca", "driver", "forklift",
-    "spedytor", "spedycj", "freight forwarder", "sales", "sprzedaż", "handlow",
-    "staż", "stażyst", "intern", "praktyk", "kurs", "szkolenie"
+    "magazynier",
+    "operator wózka",
+    "kierowca",
+    "driver",
+    "forklift",
+    "spedytor",
+    "spedycj",
+    "freight forwarder",
+    "sales",
+    "sprzedaż",
+    "handlow",
+    "staż",
+    "stażyst",
+    "intern",
+    "praktyk",
+    "kurs",
+    "szkolenie"
   ]
 }
