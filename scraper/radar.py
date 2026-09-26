@@ -50,6 +50,11 @@ OFFER_PATTERNS = [
 JOB_WORDS = r"(specjalist|koordynator|analityk|planist|inżynier|kierownik|lider|manager|specialist|engineer|coordinator|analyst|planner|praca|oferta|job)"
 
 
+# Tytuł wyniku Google musi dotyczyć logistyki / procesów / planowania
+TOPIC_WORDS = (r"(logist|magazyn|warehouse|lean|kaizen|proces|process|ciągł|improvement|planist|planner|planning|"
+               r"supply|łańcuch|zapas|inventory|operac|operations|dostaw|continuous|excellence|5s|tpm)")
+
+
 def looks_like_offer(link, title):
     low = link.lower()
     if low.endswith((".pdf", ".doc", ".docx")):
@@ -58,7 +63,9 @@ def looks_like_offer(link, title):
         return False
     if re.search(r"\d+\s+ofert|ofert pracy –|jobs in|praca:\s", (title or "").lower()):
         return False  # tytuły list wyników, np. „Praca X, Warszawa – 425 ofert”
-    return any(re.search(p, low) for p in OFFER_PATTERNS) and bool(re.search(JOB_WORDS, (title or "").lower()))
+    t = (title or "").lower()
+    return (any(re.search(p, low) for p in OFFER_PATTERNS) and bool(re.search(JOB_WORDS, t))
+            and bool(re.search(TOPIC_WORDS, t)))
 
 
 def now_utc():
@@ -162,9 +169,14 @@ def linkedin(status):
     cands = []
     details = 0
     attempted = 0
+    same = set()
     for jid, c in found.items():
         if excluded(c["title"]):
             continue
+        key = (clean(c["title"]).lower(), (c["company"].split() or [""])[0].lower())
+        if key in same:
+            continue  # to samo ogłoszenie opublikowane kilka razy (np. różne spółki grupy)
+        same.add(key)
         cid = f"linkedin-{jid}"
         cand = {
             "id": cid, "title": c["title"], "company": c["company"], "location": c["location"],
