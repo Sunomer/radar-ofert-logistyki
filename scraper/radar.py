@@ -347,9 +347,26 @@ def dedupe(items):
     return out
 
 
+def load_seen():
+    """Wczytaj seen.json odpornie na inne/stare formaty (wartość: data albo obiekt z datą)."""
+    try:
+        raw = json.loads(SEEN_FILE.read_text(encoding="utf-8")) if SEEN_FILE.exists() else {}
+    except (ValueError, OSError):
+        return {}
+    items = raw.items() if isinstance(raw, dict) else []
+    out = {}
+    for k, v in items:
+        if isinstance(v, dict):
+            v = next((v.get(f) for f in ("first", "first_seen", "firstSeen", "date", "seen")
+                      if isinstance(v.get(f), str)), "")
+        if isinstance(v, str) and re.match(r"\d{4}-\d{2}-\d{2}", v):
+            out[str(k)] = v[:10]
+    return out
+
+
 def main():
     OFFERS.mkdir(parents=True, exist_ok=True)
-    seen = json.loads(SEEN_FILE.read_text(encoding="utf-8")) if SEEN_FILE.exists() else {}
+    seen = load_seen()
     status = {}
     started = now_utc()
 
