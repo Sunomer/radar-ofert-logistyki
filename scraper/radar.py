@@ -35,7 +35,30 @@ LISTING_PATTERNS = [
     r"pracuj\.pl/praca/[^,]*;kw", r"pracuj\.pl/praca/?$", r"indeed\.com/q-", r"indeed\.com/jobs\?",
     r"linkedin\.com/jobs/(?!view)", r"glassdoor\.", r"jooble\.", r"adzuna\.", r"praca\.pl/s-",
     r"infopraca\.pl/praca\?", r"olx\.pl/praca/?$", r"zarobki", r"/blog/", r"/artykul",
+    r"aplikuj\.pl/praca/", r"jobsora\.", r"/strona-\d+", r"/q-", r"[?&](page|q|keywords?)=",
 ]
+
+
+# Adresy, które zwykle prowadzą do pojedynczego ogłoszenia
+OFFER_PATTERNS = [
+    r"praca\.pl/[^/]+_\d{6,}\.html", r"pracuj\.pl/praca/[^;]+,oferta,\d+", r"rocketjobs\.pl/oferta-pracy/",
+    r"justjoin\.it/(job-offer|offers)/", r"nofluffjobs\.com/.*job/", r"theprotocol\.it/szczegoly/praca/",
+    r"indeed\.com/(viewjob|rc/clk)", r"linkedin\.com/jobs/view/", r"olx\.pl/oferta/praca/",
+    r"aplikuj\.pl/oferta/", r"gowork\.pl/oferta/", r"infopraca\.pl/praca/.+/\d+", r"jooble\.org/desc/",
+    r"/(kariera|careers?|jobs?|oferty-pracy|praca)/.+", r"(job|offer|oferta|stanowisko|vacanc)",
+]
+JOB_WORDS = r"(specjalist|koordynator|analityk|planist|inżynier|kierownik|lider|manager|specialist|engineer|coordinator|analyst|planner|praca|oferta|job)"
+
+
+def looks_like_offer(link, title):
+    low = link.lower()
+    if low.endswith((".pdf", ".doc", ".docx")):
+        return False
+    if any(re.search(p, low) for p in LISTING_PATTERNS):
+        return False
+    if re.search(r"\d+\s+ofert|ofert pracy –|jobs in|praca:\s", (title or "").lower()):
+        return False  # tytuły list wyników, np. „Praca X, Warszawa – 425 ofert”
+    return any(re.search(p, low) for p in OFFER_PATTERNS) and bool(re.search(JOB_WORDS, (title or "").lower()))
 
 
 def now_utc():
@@ -99,7 +122,7 @@ def html_to_text(html):
 # ---------------------------------------------------------------- LinkedIn
 def linkedin(status):
     cfg = CONFIG["linkedin"]
-    base = "https://www.linkedin.com/jobs-api/jobs/guest/jobs/api/seeMoreJobPostings/search"
+    base = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
     found = {}
     errors = []
     requests_done = 0
@@ -204,7 +227,7 @@ def parse_linkedin_cards(html):
 
 
 def linkedin_detail(jid):
-    url = f"https://www.linkedin.com/jobs-api/jobs/guest/jobs/api/jobPosting/{jid}"
+    url = f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{jid}"
     try:
         r = requests.get(url, headers=HEADERS, timeout=30)
     except requests.RequestException as e:
@@ -237,7 +260,9 @@ def serp_call(params, status):
     key = os.environ.get("SERPAPI_KEY", "").strip()
     if not key:
         raise SerpStop("brak klucza SERPAPI_KEY")
-    params = dict(params, api_key=key, hl="pl", gl="pl")
+    params = dict(params, api_key=key, hl="pl")
+    if params.get("engine") == "google":
+        params["gl"] = "pl"  # Google Jobs nie obsługuje gl=pl – tam wystarcza location
     try:
         r = requests.get("https://serpapi.com/search.json", params=params, timeout=60)
     except requests.RequestException as e:
@@ -284,7 +309,7 @@ def serpapi(status):
                 title = clean(res.get("title", ""))
                 if not link or link in seen_links or excluded(title):
                     continue
-                if any(re.search(p, link) for p in LISTING_PATTERNS):
+                if not looks_like_offer(link, title):
                     continue
                 seen_links.add(link)
                 cid = safe_id("google", hashlib.sha1(link.encode()).hexdigest()[:12])
