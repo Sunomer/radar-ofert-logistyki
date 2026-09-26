@@ -1,28 +1,38 @@
 {
-  "location": "Warszawa",
-  "serpLocation": "Warsaw, Masovian Voivodeship, Poland",
-  "linkedinQueries": [
-    "optymalizacja procesów logistycznych",
-    "ciągłe doskonalenie logistyka",
-    "lean magazyn",
-    "kaizen",
-    "inżynier procesów logistycznych",
-    "analityk logistyki",
-    "planista logistyki",
-    "continuous improvement logistics",
-    "warehouse process specialist"
-  ],
-  "serpGoogleQueries": [
-    "site:pracuj.pl lean OR kaizen OR \"ciągłego doskonalenia\" OR \"optymalizacji procesów\" OR \"procesów logistycznych\" Warszawa",
-    "site:pl.linkedin.com/jobs/view logistyka OR logistics OR lean OR \"continuous improvement\" OR warehouse Warszawa",
-    "site:pl.indeed.com OR site:praca.pl OR site:nofluffjobs.com \"logistyki\" OR \"lean\" OR \"planista\" OR \"procesów\" Warszawa"
-  ],
-  "serpJobsQuery": "",
-  "includeTitle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|proces|process|planist|planner|planning|planowan|supply|łańcuch|lancuch|analityk|analyst|operations|operacj|inventory|zapas|excellence|value stream|strumie|shipping|receiving|fulfil|distribution|dystrybuc|kontrol|control tower|intralogist|\\bci\\b|opex",
-  "excludeTitle": "magazynier|operator wózka|operator wozka|kierowca|driver|kurier|spedyt|forwarder|sprzedaw|sales|handlow|account manager|intern\\b|internship|staż|staz|praktyk|sap .*consultant|developer|programista|księgow|accountant|lekarz|pielęgn|pracowni(k|czka)[^|]*magazyn|pracownik produkcji",
-  "maxDetailsPerRun": 30,
-  "keepDays": 14,
-  "listDays": 2,
-  "serpTbs": "qdr:w",
-  "includeTitleGoogle": "logist|magazyn|warehouse|lean|kaizen|improvement|doskonal|supply|łańcuch|lancuch|planist|planner|planowan|procesów|process|value stream|strumie|inventory|zapas|opex|excellence"
+  "linkedin": {
+    "location": "Warszawa, Mazowieckie, Polska",
+    "distance_miles": 25,
+    "hours": 24,
+    "pages_per_query": 1,
+    "max_details": 40,
+    "queries": [
+      "optymalizacja procesów logistycznych",
+      "ciągłe doskonalenie logistyka",
+      "lean magazyn",
+      "kaizen",
+      "inżynier procesów logistycznych",
+      "analityk logistyki",
+      "planista logistyki",
+      "continuous improvement logistics",
+      "warehouse process specialist"
+    ]
+  },
+  "serpapi": {
+    "location": "Warsaw, Masovian Voivodeship, Poland",
+    "google_jobs_queries": [
+      "specjalista ds. optymalizacji procesów logistycznych Warszawa",
+      "continuous improvement specialist logistyka Warszawa",
+      "analityk logistyki Warszawa"
+    ],
+    "google_queries": [
+      "\"ciągłego doskonalenia\" logistyka praca Warszawa",
+      "\"lean\" specjalista magazyn oferta pracy Warszawa"
+    ],
+    "max_page_fetches": 10
+  },
+  "exclude_title_words": [
+    "magazynier", "operator wózka", "kierowca", "driver", "forklift",
+    "spedytor", "spedycj", "freight forwarder", "sales", "sprzedaż", "handlow",
+    "staż", "stażyst", "intern", "praktyk", "kurs", "szkolenie"
+  ]
 }
