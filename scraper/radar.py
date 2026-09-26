@@ -263,11 +263,17 @@ def serp_call(params, status):
     params = dict(params, api_key=key, hl="pl")
     if params.get("engine") == "google":
         params["gl"] = "pl"  # Google Jobs nie obsługuje gl=pl – tam wystarcza location
-    try:
-        r = requests.get("https://serpapi.com/search.json", params=params, timeout=60)
-    except requests.RequestException as e:
-        status["serp"]["errors"].append(f"błąd połączenia ({type(e).__name__})")
-        return None
+    label = f"{'Google Jobs' if params.get('engine') == 'google_jobs' else 'Google'} „{params.get('q', '')[:40]}”"
+    r = None
+    for attempt in (1, 2):
+        try:
+            r = requests.get("https://serpapi.com/search.json", params=params, timeout=150)
+            break
+        except requests.RequestException as e:
+            if attempt == 2:
+                status["serp"]["errors"].append(f"{label}: błąd połączenia ({type(e).__name__}) po 2 próbach")
+                return None
+            time.sleep(10)
     status["serp"]["searches"] += 1
     try:
         data = r.json()
@@ -279,10 +285,12 @@ def serp_call(params, status):
     if r.status_code == 429 or "run out of searches" in err.lower() or "limit" in err.lower():
         raise SerpStop(f"wyczerpany limit wyszukiwań SerpAPI (kod {r.status_code}): {err or 'brak szczegółów'}")
     if r.status_code != 200:
-        status["serp"]["errors"].append(f"kod {r.status_code}: {err or 'brak szczegółów'}")
+        status["serp"]["errors"].append(f"{label}: kod {r.status_code}: {err or 'brak szczegółów'}")
         return None
-    if err and "hasn't returned any results" not in err:
-        status["serp"]["errors"].append(err)
+    if "hasn't returned any results" in err:
+        status["serp"].setdefault("empty", []).append(label)
+    elif err:
+        status["serp"]["errors"].append(f"{label}: {err}")
     return data
 
 
@@ -420,6 +428,8 @@ def main():
     li_state = "BŁĄD" if (L["errors"] and L["count"] == 0) else ("OK z uwagami" if L["errors"] else "OK")
     sp_state = "BŁĄD" if S.get("stopped") and not sp else ("OK z uwagami" if (S.get("stopped") or S["errors"]) else "OK")
     sp_errs = ([S["stopped"]] if S.get("stopped") else []) + dedupe(S["errors"])
+    if S.get("empty"):
+        sp_errs.append("bez wyników: " + ", ".join(S["empty"]))
 
     local = started.astimezone(TZ)
     out = [
@@ -427,7 +437,7 @@ def main():
         "",
         f"Ostatni przebieg: {local.strftime('%Y-%m-%d %H:%M')} (Europe/Warsaw) = {started.strftime('%Y-%m-%dT%H:%M:%SZ')}",
         f"LinkedIn: {li_state} – kandydatów: {L['count']}, zapytań HTTP: {L['requests']}; błędy: {'; '.join(L['errors'][:5]) or 'brak'}",
-        f"SerpAPI: {sp_state} – wyszukiwań SerpAPI: {S['searches']}, kandydatów: {len(sp)} (Google: {S['google']}, Google Jobs: {S['jobs']}); błędy: {'; '.join(sp_errs[:5]) or 'brak'}",
+        f"SerpAPI: {sp_state} – wyszukiwań SerpAPI: {S['searches']}, kandydatów: {len(sp)} (Google: {S['google']}, Google Jobs: {S['jobs']}); błędy: {'; '.join(sp_errs[:8]) or 'brak'}",
         "",
         "Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link",
         "",
