@@ -19,16 +19,16 @@
   },
   "serpapi": {
     "location": "Warsaw, Masovian Voivodeship, Poland",
-    "google_jobs_queries": [
-      "specjalista ds. optymalizacji procesów logistycznych Warszawa",
-      "continuous improvement specialist logistyka Warszawa",
-      "analityk logistyki Warszawa"
-    ],
+    "google_jobs_queries": [],
     "google_queries": [
-      "(site:praca.pl OR site:rocketjobs.pl OR site:pl.indeed.com OR site:olx.pl OR site:aplikuj.pl OR site:gowork.pl OR site:justjoin.it) (\"ciągłego doskonalenia\" OR lean OR kaizen OR \"continuous improvement\") logistyka Warszawa",
-      "(site:praca.pl OR site:rocketjobs.pl OR site:pl.indeed.com OR site:olx.pl OR site:aplikuj.pl OR site:gowork.pl OR site:justjoin.it) (\"optymalizacji procesów\" OR \"procesów magazynowych\" OR \"analityk logistyki\" OR \"planista logistyki\") Warszawa"
+      "oferta pracy Warszawa \"ciągłego doskonalenia\" logistyka",
+      "oferta pracy Warszawa lean specjalista magazyn procesy",
+      "oferta pracy Warszawa \"optymalizacji procesów\" logistycznych",
+      "oferta pracy Warszawa \"analityk logistyki\" OR \"planista logistyki\"",
+      "job Warsaw \"continuous improvement\" logistics warehouse"
     ],
-    "max_page_fetches": 10
+    "max_page_fetches": 10,
+    "_uwaga": "Google Jobs zwracał dla Polski błąd 503 – wyłączony. Aby spróbować ponownie, wpisz frazy do google_jobs_queries."
   },
   "exclude_title_words": [
     "magazynier",
