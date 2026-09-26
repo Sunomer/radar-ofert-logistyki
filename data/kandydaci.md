@@ -1,16 +1,18 @@
 # Radar ofert logistyki – kandydaci
 
-Ostatni przebieg: 2026-09-25T21:58:59+00:00 (UTC)
-LinkedIn: znaleziono 90, pasujących tytułów 16, nowych 0, pobranych treści 0.
-SerpAPI: wyszukiwań 4, wyników 13, nowych 5. Google Jobs: We couldn't get valid results for this search. Please try again later.
-Kandydaci z ostatnich 2 dni: 22
+Ostatni przebieg: 2026-09-26T05:26:32+00:00 (UTC)
+LinkedIn: znaleziono 90, pasujących tytułów 16, nowych 2, pobranych treści 2.
+SerpAPI: wyszukiwań 3, wyników 16, nowych 0.
+Kandydaci z ostatnich 2 dni: 24
 Treść ogłoszenia (gdy jest): plik oferty/<id>.md w tym samym katalogu.
 
-- pracuj-1005105431 | Specjalista ds. Optymalizacji Procesów (K/M) |  |  | opubl. 5 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/specjalista-ds-optymalizacji-procesow-k-m-warszawa,oferta,1005105431
-- pracuj-1005049818 | Oferta pracy Inżynier Planowania Procesów Produkcyjnych ... |  |  | opubl. 6 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/inzynier-planowania-procesow-produkcyjnych-manufacturing-planner-warszawa,oferta,1005049818?sug=oferta_bottom_rd_23
-- pracuj-1005112508 | Inżynier Procesów Lean - Knauf Interfer Aluminium Sp. z oo |  |  | opubl. 2 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/inzynier-procesow-lean-lean-manufacturing-m-k-opole,oferta,1005112508
-- linkedin-4470420542 | Avantor zatrudnia na stanowisko Process Safety Manager |  |  | opubl. 3 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://pl.linkedin.com/jobs/view/process-safety-manager-europe-at-avantor-4470420542
+- linkedin-4441145585 | Inżynier/Inżynierka Procesu (k/m/d) | Lear Corporation | Pruszków | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-26T05:26 | treść: tak | https://pl.linkedin.com/jobs/view/in%C5%BCynier-in%C5%BCynierka-procesu-k-m-d-at-lear-corporation-4441145585
+- linkedin-4451692689 | Manufacturing Process Engineer - Injection Moulding (m/f/d) | Lear Corporation | Pruszków | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-26T05:26 | treść: tak | https://pl.linkedin.com/jobs/view/manufacturing-process-engineer-injection-moulding-m-f-d-at-lear-corporation-4451692689
 - linkedin-4469879159 | Fortrea zatrudnia na stanowisko Epidemiologist Director w ... |  |  | opubl. 4 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://pl.linkedin.com/jobs/view/epidemiologist-director-at-fortrea-4469879159
+- linkedin-4470420542 | Avantor zatrudnia na stanowisko Process Safety Manager |  |  | opubl. 3 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://pl.linkedin.com/jobs/view/process-safety-manager-europe-at-avantor-4470420542
+- pracuj-1005049818 | Oferta pracy Inżynier Planowania Procesów Produkcyjnych ... |  |  | opubl. 6 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/inzynier-planowania-procesow-produkcyjnych-manufacturing-planner-warszawa,oferta,1005049818?sug=oferta_bottom_rd_23
+- pracuj-1005105431 | Specjalista ds. Optymalizacji Procesów (K/M) |  |  | opubl. 5 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/specjalista-ds-optymalizacji-procesow-k-m-warszawa,oferta,1005105431
+- pracuj-1005112508 | Inżynier Procesów Lean - Knauf Interfer Aluminium Sp. z oo |  |  | opubl. 2 dni temu | wynagr.: - | Google (SerpAPI) | pierwszy raz: 2026-09-25T21:58 | treść: nie | https://www.pracuj.pl/praca/inzynier-procesow-lean-lean-manufacturing-m-k-opole,oferta,1005112508
 - linkedin-4442625683 | Specjalista ds. strumienia wartości (K/M) | TRUMPF w Polsce | Zielonka | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-25T21:49 | treść: tak | https://pl.linkedin.com/jobs/view/specjalista-ds-strumienia-warto%C5%9Bci-k-m-at-trumpf-w-polsce-4442625683
 - linkedin-4453135364 | Warehouse Supervisor | JD.COM | Warszawa | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-25T21:49 | treść: tak | https://pl.linkedin.com/jobs/view/warehouse-supervisor-at-jd-com-4453135364
 - linkedin-4457391427 | Regional Operations Manager (m/f/d) | Flix | Warszawa | opubl. 2026-09-25 | wynagr.: - | LinkedIn | pierwszy raz: 2026-09-25T21:49 | treść: tak | https://pl.linkedin.com/jobs/view/regional-operations-manager-m-f-d-at-flix-4457391427
