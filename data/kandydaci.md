@@ -1,19 +1,38 @@
 # Kandydaci – Radar ofert logistyki
 
-Ostatni przebieg: 2026-09-26 09:26 (Europe/Warsaw) = 2026-09-26T07:26:02Z
-LinkedIn: BŁĄD – kandydatów: 0, zapytań HTTP: 9; błędy: „optymalizacja procesów logistycznych”: kod 404; „ciągłe doskonalenie logistyka”: kod 404; „lean magazyn”: kod 404; „kaizen”: kod 404; „inżynier procesów logistycznych”: kod 404
-SerpAPI: OK z uwagami – wyszukiwań SerpAPI: 5, kandydatów: 11 (Google: 11, Google Jobs: 0); błędy: kod 400: Unsupported `pl` country - gl parameter.
+Ostatni przebieg: 2026-09-26 09:30 (Europe/Warsaw) = 2026-09-26T07:30:06Z
+LinkedIn: OK – kandydatów: 30, zapytań HTTP: 22; błędy: brak
+SerpAPI: OK z uwagami – wyszukiwań SerpAPI: 1, kandydatów: 0 (Google: 0, Google Jobs: 0); błędy: błąd połączenia (ReadTimeout)
 
 Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link
 
-google-bf91a884418c | Transport i Logistyka Polska | - | - | 19 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://tlp.org.pl/
-google-fcef06dc5e17 | Rok Zjazd Forma studiów | - | - | 15 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: nie | https://www.upsl.edu.pl/content/download/89183/file/Logistyka%20SPS%20II%20niestacjonarne%2015.09.2026.pdf
-google-db96e790f68c | logistyka - co znaczy? / definicja słowa / Słownik PWN | - | - | 21 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: nie | https://sjp.pwn.pl/slowniki/logistyka.html
-google-4d54c4b582f3 | Centrum Szkolenia Logistyki | - | - | 3 godziny temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://cslog.wp.mil.pl/
-google-e37d387df3cc | Zeebrügge-Immingham / Trasy i rozkłady | - | - | 15 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://www.dfds.com/pl-pl/promy-towarowe-i-logistyka/trasy-i-rozklady/zeebrugge-immingham
-google-d4206526be87 | Juo - Executive Assistant | - | - | 22 godziny temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://rocketjobs.pl/oferta-pracy/juo-executive-assistant-warszawa-praca-biurowa-administracja
-google-97b9dd99e666 | Specjalista / Specjalistka ds. Doskonalenia Procesów ... | - | - | 21 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://www.praca.pl/specjalista-specjalistka-ds-doskonalenia-procesow-operacyjnych_11502124.html
-google-e820524e2998 | Praca project manager, Warszawa - 425 ofert | - | - | 10 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://www.aplikuj.pl/praca/warszawa/project-manager/strona-2
-google-e91341c512a4 | LeanTrix / Zwiększamy zdolności organizacji - Lean, TWI, TOC | - | - | 20 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://leantrix.com/pl/
-google-69a5227c17e1 | PILNE! Praca: koordynator procesów magazynowych | - | - | 8 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://pl.jobsora.com/praca/q-koordynator-proces%C3%B3w-magazynowych
-google-c9986b8ef66d | Czym jest leadership? | - | - | 22 godziny temu | - | Google (SerpAPI) | 2026-09-26 | treść: nie | https://lmcg.com.pl/czym-jest-leadership.html
+linkedin-4442625683 | Specjalista ds. strumienia wartości (K/M) | TRUMPF w Polsce | Zielonka | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4442625683
+linkedin-4472007144 | Senior Operations Manager / Contract Logistics (K/M/Inni) | HRK S.A. | Woj. Mazowieckie, Polska | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472007144
+linkedin-4457391427 | Regional Operations Manager (m/f/d) | Flix | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4457391427
+linkedin-4461920070 | Senior Logistics Specialist with English - Ukraine | Brown-Forman | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4461920070
+linkedin-4470162098 | Koordynator/Koordynatorka Zespołu Serwisu Kurierskiego | InPost | Bronisze | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470162098
+linkedin-4470766968 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Belgium | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470766968
+linkedin-4470763533 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Logistics Poland | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470763533
+linkedin-4472023890 | Demand Planning & Fulfillment Coordinator (F/M/X) | Mondelēz International | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472023890
+linkedin-4471889557 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4471889557
+linkedin-4471889587 | Supply Chain and Manufacturing AI Senior Product Engineer | Mars | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4471889587
+linkedin-4453135364 | Warehouse Supervisor | JD.COM | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4453135364
+linkedin-4441145585 | Inżynier/Inżynierka Procesu (k/m/d) | Lear Corporation | Pruszków | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4441145585
+linkedin-4472086418 | Kierownik / Kierowniczka Hurtowni Pokryć Dachowych (M/K) | extraDACH | Grodzisk Mazowiecki | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4472086418
+linkedin-4472070859 | Pracownik / Pracowniczka Magazynu (Sektor Logistyki) | Castorama Polska Sp. z o.o. | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472070859
+linkedin-4470005031 | Digital Operations Director, Europe | Konecta Team for Coca-Cola | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4470005031
+linkedin-4467371084 | Pełnomocnik ds. Systemów Jakości - Branża Kosmetyczna | MG Evolution® Manufacturer of Cosmetics and Medical Devices Poland | Warszawa i okolice | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4467371084
+linkedin-4461968168 | Process Engineer | BorgWarner | Błonie | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4461968168
+linkedin-4451692689 | Manufacturing Process Engineer - Injection Moulding (m/f/d) | Lear Corporation | Pruszków | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4451692689
+linkedin-4470321595 | L’Oréal SeedZ Program / Kickstart your Finance Career 🚀 | L'Oréal | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470321595
+linkedin-4470174415 | Product Designer - Mobile UI & Design System (Mid/Senior) | Inter Cars S.A. | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470174415
+linkedin-4470160891 | Process Quality & Improvement Manager / Process Quality & Improvement Managerka - Warszawa (Mazowieckie), Polska K/M | Astek | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4470160891
+linkedin-4472011979 | Logistics Operations Specialist, Fixed-Term Contract | IKEA | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472011979
+linkedin-4471887272 | Oracle EBS R12 Supply Chain Manufacturing Implementation SME | Us3 Consulting | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4471887272
+linkedin-4461955719 | Oral Healthcare Supply and Demand Planner | Haleon | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4461955719
+linkedin-4472017579 | Senior Order Management Specialist with German | Antal Poland | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4472017579
+linkedin-4472050170 | Customer Experience Agent | A.P. Moller - Maersk | Warszawa i okolice | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4472050170
+linkedin-4470776503 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Belgium | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470776503
+linkedin-4470751969 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Logistics Poland | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470751969
+linkedin-4471896148 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4471896148
+linkedin-4470165356 | Junior Supply Planner | Orangina Suntory France | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4470165356
