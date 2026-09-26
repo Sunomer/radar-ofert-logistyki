@@ -1,394 +1,430 @@
 #!/usr/bin/env python3
-"""Radar ofert logistyki – zbieracz ofert uruchamiany przez GitHub Actions.
+"""Radar ofert logistyki – zbieranie kandydatów z LinkedIn i SerpAPI.
 
-Zbiera oferty z:
-  * LinkedIn (publiczne wyniki wyszukiwania bez logowania, ostatnie 24 h) + treść ogłoszeń,
-  * SerpAPI (Google z filtrem 24 h + Google Jobs) – tylko gdy RUN_SERP=true i jest SERPAPI_KEY.
-
-Wyniki zapisuje w katalogu data/:
-  data/kandydaci.md      – lista kandydatów z ostatnich dni (czyta ją Claude),
-  data/oferty/<id>.md    – treść pojedynczego ogłoszenia,
-  data/status.json       – stan ostatniego przebiegu,
-  data/seen.json         – pamięć już widzianych ofert.
-
-Tylko biblioteka standardowa Pythona, bez instalowania pakietów.
-Klucz SERPAPI_KEY jest czytany ze zmiennej środowiskowej (GitHub Secret) i nigdy nie jest zapisywany.
+Wynik:
+  data/kandydaci.md        – nagłówek ze stanem źródeł + jedna linia na kandydata
+  data/oferty/<id>.md      – zapisana treść ogłoszenia
+  data/seen.json           – kiedy każdy kandydat pojawił się pierwszy raz
 """
-import datetime as dt
 import hashlib
-import html
 import json
 import os
 import re
 import sys
 import time
-import urllib.error
-import urllib.parse
-import urllib.request
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from urllib.parse import quote_plus
+from zoneinfo import ZoneInfo
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(ROOT, "data")
-OFFERS_DIR = os.path.join(DATA, "oferty")
+import requests
+from bs4 import BeautifulSoup
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+OFFERS = DATA / "oferty"
+SEEN_FILE = DATA / "seen.json"
+CONFIG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
+TZ = ZoneInfo("Europe/Warsaw")
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/128.0 Safari/537.36")
+HEADERS = {"User-Agent": UA, "Accept-Language": "pl-PL,pl;q=0.9,en;q=0.8"}
 
-NOW = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
-
-
-def log(*a):
-    print(*a, file=sys.stderr, flush=True)
-
-
-def http_get(url, timeout=30):
-    req = urllib.request.Request(url, headers={
-        "User-Agent": UA,
-        "Accept-Language": "pl-PL,pl;q=0.9,en;q=0.8",
-        "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
-    })
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.status, r.read().decode("utf-8", "replace")
-    except urllib.error.HTTPError as e:
-        body = ""
-        try:
-            body = e.read().decode("utf-8", "replace")
-        except Exception:
-            pass
-        return e.code, body
-    except Exception as e:  # sieć, timeout
-        return 0, str(e)
+# Wyniki Google, które zwykle są listami ofert albo artykułami, a nie pojedynczym ogłoszeniem
+LISTING_PATTERNS = [
+    r"pracuj\.pl/praca/[^,]*;kw", r"pracuj\.pl/praca/?$", r"indeed\.com/q-", r"indeed\.com/jobs\?",
+    r"linkedin\.com/jobs/(?!view)", r"glassdoor\.", r"jooble\.", r"adzuna\.", r"praca\.pl/s-",
+    r"infopraca\.pl/praca\?", r"olx\.pl/praca/?$", r"zarobki", r"/blog/", r"/artykul",
+]
 
 
-def strip_tags(s):
-    s = re.sub(r"(?i)<br\s*/?>", "\n", s or "")
-    s = re.sub(r"(?i)</(p|li|ul|ol|div|h\d)>", "\n", s)
-    s = re.sub(r"(?i)<li[^>]*>", "- ", s)
-    s = re.sub(r"<[^>]+>", "", s)
-    s = html.unescape(s)
-    s = re.sub(r"[ \t ]+", " ", s)
-    s = re.sub(r"\n\s*\n+", "\n", s)
-    return s.strip()
+def now_utc():
+    return datetime.now(timezone.utc)
 
 
-def first(pattern, text, flags=re.S):
-    m = re.search(pattern, text or "", flags)
-    return strip_tags(m.group(1)) if m else ""
+def clean(text):
+    return re.sub(r"\s+", " ", (text or "")).strip()
 
 
-def load_json(path, default):
-    try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return default
+def cell(text):
+    """Pole w linii kandydata – bez znaków |, nowych linii."""
+    return clean(text).replace("|", "/") or "-"
 
 
-def save_json(path, obj):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=1, sort_keys=True)
-        f.write("\n")
+def excluded(title):
+    t = (title or "").lower()
+    return any(w in t for w in CONFIG.get("exclude_title_words", []))
 
 
-def short_hash(s):
-    return hashlib.sha1((s or "").encode("utf-8")).hexdigest()[:10]
+def safe_id(prefix, raw):
+    raw = re.sub(r"[^A-Za-z0-9_.-]", "", str(raw))
+    if not raw or len(raw) > 60:
+        raw = hashlib.sha1(str(raw).encode()).hexdigest()[:12]
+    return f"{prefix}-{raw}"
 
 
-def id_from_link(link, fallback_prefix):
-    link = link or ""
-    m = re.search(r"pracuj\.pl/.*oferta,(\d+)", link)
-    if m:
-        return "pracuj-" + m.group(1)
-    m = re.search(r"linkedin\.com/jobs/view/(?:[^/?]*-)?(\d{6,})", link)
-    if m:
-        return "linkedin-" + m.group(1)
-    return fallback_prefix + "-" + short_hash(link.split("?")[0].rstrip("/").lower())
+def save_offer(cid, cand, body):
+    body = (body or "").strip()
+    if len(body) < 80:
+        return False
+    lines = [
+        f"# {cand['title']}",
+        "",
+        f"- Firma: {cand.get('company') or '-'}",
+        f"- Lokalizacja: {cand.get('location') or '-'}",
+        f"- Data publikacji: {cand.get('date') or '-'}",
+        f"- Wynagrodzenie: {cand.get('salary') or '-'}",
+        f"- Źródło: {cand['source']}",
+        f"- Link: {cand['link']}",
+    ]
+    for k, v in (cand.get("extra") or {}).items():
+        lines.append(f"- {k}: {v}")
+    lines += ["", "## Treść ogłoszenia", "", body[:20000], ""]
+    (OFFERS / f"{cid}.md").write_text("\n".join(lines), encoding="utf-8")
+    return True
+
+
+def html_to_text(html):
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup(["script", "style", "noscript", "svg", "header", "footer", "nav"]):
+        tag.decompose()
+    for br in soup.find_all(["br", "li", "p", "h1", "h2", "h3", "h4", "div"]):
+        br.insert_after("\n")
+    text = soup.get_text()
+    text = re.sub(r"[ \t\r\f\v]+", " ", text)
+    text = re.sub(r"\n\s*\n+", "\n\n", text)
+    return text.strip()
 
 
 # ---------------------------------------------------------------- LinkedIn
-def linkedin_search(query, location):
-    url = ("https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?"
-           + urllib.parse.urlencode({"keywords": query, "location": location,
-                                     "f_TPR": "r86400", "start": 0}))
-    code, body = http_get(url)
-    if code != 200:
-        return code, []
-    items = []
-    for block in body.split("<li>")[1:]:
-        jid = first(r"urn:li:jobPosting:(\d+)", block)
+def linkedin(status):
+    cfg = CONFIG["linkedin"]
+    base = "https://www.linkedin.com/jobs-api/jobs/guest/jobs/api/seeMoreJobPostings/search"
+    found = {}
+    errors = []
+    requests_done = 0
+    blocked = False
+    for q in cfg["queries"]:
+        if blocked:
+            break
+        for page in range(cfg.get("pages_per_query", 1)):
+            params = {
+                "keywords": q,
+                "location": cfg["location"],
+                "distance": cfg.get("distance_miles", 25),
+                "f_TPR": f"r{int(cfg.get('hours', 24)) * 3600}",
+                "start": page * 25,
+            }
+            try:
+                r = requests.get(base, params=params, headers=HEADERS, timeout=30)
+                requests_done += 1
+            except requests.RequestException as e:
+                errors.append(f"„{q}”: błąd połączenia ({type(e).__name__})")
+                break
+            if r.status_code == 429:
+                errors.append(f"kod 429 (LinkedIn ograniczył zapytania) przy „{q}” – przerwano wyszukiwanie")
+                blocked = True
+                break
+            if r.status_code != 200:
+                errors.append(f"„{q}”: kod {r.status_code}")
+                break
+            cards = parse_linkedin_cards(r.text)
+            for c in cards:
+                found.setdefault(c["jid"], c)
+            if len(cards) < 25:
+                break
+            time.sleep(2)
+        time.sleep(2)
+
+    cands = []
+    details = 0
+    attempted = 0
+    for jid, c in found.items():
+        if excluded(c["title"]):
+            continue
+        cid = f"linkedin-{jid}"
+        cand = {
+            "id": cid, "title": c["title"], "company": c["company"], "location": c["location"],
+            "date": c["date"], "salary": c["salary"], "source": "LinkedIn",
+            "link": f"https://pl.linkedin.com/jobs/view/{jid}", "has_body": False,
+        }
+        if (OFFERS / f"{cid}.md").exists():
+            cand["has_body"] = True
+        elif details < cfg.get("max_details", 40):
+            details += 1
+            attempted += 1
+            body, extra, err = linkedin_detail(jid)
+            if err:
+                errors.append(err)
+                if "429" in err:
+                    details = 10 ** 6  # przestań pobierać szczegóły w tym przebiegu
+            if extra:
+                cand["extra"] = extra
+            cand["has_body"] = save_offer(cid, cand, body)
+            time.sleep(2)
+        cands.append(cand)
+
+    status["linkedin"] = {
+        "requests": requests_done + attempted,
+        "count": len(cands),
+        "errors": dedupe(errors),
+    }
+    return cands
+
+
+def parse_linkedin_cards(html):
+    soup = BeautifulSoup(html, "html.parser")
+    out = []
+    for li in soup.select("li"):
+        urn_el = li.select_one("[data-entity-urn]")
+        link_el = li.select_one("a.base-card__full-link, a[href*='/jobs/view/']")
+        jid = None
+        if urn_el and urn_el.get("data-entity-urn"):
+            m = re.search(r"(\d{6,})", urn_el["data-entity-urn"])
+            jid = m.group(1) if m else None
+        if not jid and link_el:
+            m = re.search(r"-(\d{6,})(?:\?|$)", link_el.get("href", ""))
+            jid = m.group(1) if m else None
         if not jid:
             continue
-        link = first(r'class="base-card__full-link[^"]*"[^>]*href="([^"]+)"', block)
-        link = html.unescape(link).split("?")[0] if link else f"https://pl.linkedin.com/jobs/view/{jid}"
-        items.append({
-            "id": "linkedin-" + jid,
-            "source": "LinkedIn",
-            "query": query,
-            "title": first(r'<h3[^>]*base-search-card__title[^>]*>(.*?)</h3>', block),
-            "company": first(r'<h4[^>]*base-search-card__subtitle[^>]*>(.*?)</h4>', block),
-            "location": first(r'<span[^>]*job-search-card__location[^>]*>(.*?)</span>', block),
-            "postedAt": first(r'<time[^>]*datetime="([\d-]+)"', block),
-            "salary": first(r'<span[^>]*job-search-card__salary-info[^>]*>(.*?)</span>', block),
-            "link": link,
+        title = li.select_one(".base-search-card__title")
+        comp = li.select_one(".base-search-card__subtitle")
+        loc = li.select_one(".job-search-card__location")
+        t = li.select_one("time")
+        sal = li.select_one(".job-search-card__salary-info")
+        out.append({
+            "jid": jid,
+            "title": clean(title.get_text()) if title else "",
+            "company": clean(comp.get_text()) if comp else "",
+            "location": clean(loc.get_text()) if loc else "",
+            "date": (t.get("datetime") if t else "") or "",
+            "salary": clean(sal.get_text()) if sal else "",
         })
-    return code, items
+    return out
 
 
-def linkedin_details(jid_num):
-    code, body = http_get(f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{jid_num}")
-    if code != 200:
-        return code, None
-    criteria = []
-    for h, v in re.findall(r'description__job-criteria-subheader[^>]*>(.*?)</h3>\s*<span[^>]*>(.*?)</span>', body, re.S):
-        criteria.append(f"{strip_tags(h)}: {strip_tags(v)}")
-    return code, {
-        "title": first(r'<h2[^>]*top-card-layout__title[^>]*>(.*?)</h2>', body),
-        "company": first(r'<a[^>]*topcard__org-name-link[^>]*>(.*?)</a>', body),
-        "location": first(r'<span[^>]*topcard__flavor--bullet[^>]*>(.*?)</span>', body),
-        "postedAgo": first(r'<span[^>]*posted-time-ago__text[^>]*>(.*?)</span>', body),
-        "salary": first(r'<div[^>]*compensation__salary[^>]*>(.*?)</div>', body),
-        "criteria": criteria,
-        "description": first(r'<div[^>]*show-more-less-html__markup[^>]*>(.*?)</div>', body),
-    }
+def linkedin_detail(jid):
+    url = f"https://www.linkedin.com/jobs-api/jobs/guest/jobs/api/jobPosting/{jid}"
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=30)
+    except requests.RequestException as e:
+        return "", None, f"szczegóły {jid}: błąd połączenia ({type(e).__name__})"
+    if r.status_code == 429:
+        return "", None, "kod 429 (limit zapytań LinkedIn) przy pobieraniu treści ogłoszeń"
+    if r.status_code != 200:
+        return "", None, f"szczegóły {jid}: kod {r.status_code}"
+    soup = BeautifulSoup(r.text, "html.parser")
+    desc = soup.select_one(".show-more-less-html__markup, .description__text")
+    extra = {}
+    for item in soup.select(".description__job-criteria-item"):
+        k = item.select_one(".description__job-criteria-subheader")
+        v = item.select_one(".description__job-criteria-text")
+        if k and v:
+            extra[clean(k.get_text())] = clean(v.get_text())
+    sal = soup.select_one(".salary, .compensation__salary")
+    if sal:
+        extra["Wynagrodzenie (LinkedIn)"] = clean(sal.get_text())
+    body = html_to_text(str(desc)) if desc else ""
+    return body, extra, None
 
 
 # ---------------------------------------------------------------- SerpAPI
-# Wyniki Google przyjmujemy tylko wtedy, gdy link prowadzi do pojedynczego ogłoszenia.
-OFFER_URL = re.compile(
-    r"pracuj\.pl/praca/.+,oferta,\d+"
-    r"|linkedin\.com/jobs/view/"
-    r"|indeed\.com/(viewjob|rc/clk|pagead/clk|m/viewjob)"
-    r"|praca\.pl/.+_\d+\.html"
-    r"|nofluffjobs\.com/(pl/)?job/"
-    r"|justjoin\.it/(job-offer|offers)/"
-    r"|theprotocol\.it/szczegoly/praca/"
-    r"|olx\.pl/oferta/praca/"
-    r"|(kariera|career|careers|jobs|praca)\.[a-z0-9.-]+/.*\d{3,}"
-    r"|/(kariera|careers?|jobs?|oferty-pracy|rekrutacja)/.*\d{3,}",
-    re.I)
+class SerpStop(Exception):
+    pass
 
 
-def is_single_offer(item):
-    """Odrzuca wyniki Google, które nie są pojedynczym ogłoszeniem (listy, grupy, agregatory)."""
-    return bool(OFFER_URL.search(item.get("link") or ""))
-
-
-def serp_call(params, key, gl="pl"):
-    p = dict(params, api_key=key, hl="pl")
-    if gl:
-        p["gl"] = gl
-    code, body = http_get("https://serpapi.com/search.json?" + urllib.parse.urlencode(p), timeout=150)
+def serp_call(params, status):
+    key = os.environ.get("SERPAPI_KEY", "").strip()
+    if not key:
+        raise SerpStop("brak klucza SERPAPI_KEY")
+    params = dict(params, api_key=key, hl="pl", gl="pl")
     try:
-        data = json.loads(body)
-    except Exception:
-        data = {"error": f"HTTP {code} {body[:120]}".strip()}
+        r = requests.get("https://serpapi.com/search.json", params=params, timeout=60)
+    except requests.RequestException as e:
+        status["serp"]["errors"].append(f"błąd połączenia ({type(e).__name__})")
+        return None
+    status["serp"]["searches"] += 1
+    try:
+        data = r.json()
+    except ValueError:
+        data = {}
+    err = data.get("error", "")
+    if r.status_code == 401 or "invalid api key" in err.lower():
+        raise SerpStop("błędny klucz SERPAPI_KEY (kod 401)")
+    if r.status_code == 429 or "run out of searches" in err.lower() or "limit" in err.lower():
+        raise SerpStop(f"wyczerpany limit wyszukiwań SerpAPI (kod {r.status_code}): {err or 'brak szczegółów'}")
+    if r.status_code != 200:
+        status["serp"]["errors"].append(f"kod {r.status_code}: {err or 'brak szczegółów'}")
+        return None
+    if err and "hasn't returned any results" not in err:
+        status["serp"]["errors"].append(err)
     return data
 
 
-def run_serp(cfg, key):
-    status = {"ran": True, "searches": 0, "results": 0, "note": ""}
-    items, errors = [], []
-    for q in cfg.get("serpGoogleQueries", []):
-        status["searches"] += 1
-        d = serp_call({"engine": "google", "q": q, "tbs": cfg.get("serpTbs", "qdr:d"), "num": 20,
-                       "location": cfg["serpLocation"]}, key)
-        if d.get("error"):
-            if "hasn't returned any results" not in str(d["error"]):
-                errors.append("Google: " + str(d["error"]))
-            continue
-        for o in d.get("organic_results") or []:
-            if not o.get("link"):
-                continue
-            it = {
-                "id": id_from_link(o["link"], "google"),
-                "source": "Google (SerpAPI)", "query": q,
-                "title": o.get("title", ""), "company": "", "location": "",
-                "postedAt": o.get("date", ""), "salary": "", "link": o["link"],
-                "snippet": o.get("snippet", ""),
-            }
-            if is_single_offer(it):
-                items.append(it)
-            else:
-                status["skipped"] = status.get("skipped", 0) + 1
-    jq = cfg.get("serpJobsQuery")
-    if jq:
-        status["searches"] += 1
-        # Google Jobs nie obsługuje parametru gl=pl – kraj wynika z parametru location.
-        d = serp_call({"engine": "google_jobs", "q": jq, "location": cfg["serpLocation"]}, key, gl=None)
-        if d.get("error") and "hasn't returned any results" in str(d["error"]):
-            d = {}
-        if d.get("error"):
-            errors.append("Google Jobs: " + str(d["error"]))
-        for j in d.get("jobs_results") or []:
-            ext = j.get("detected_extensions") or {}
-            posted = str(ext.get("posted_at", ""))
-            if posted and not re.search(r"minut|godz|hour|min ago|1 dzie|1 day|dzisiaj|today", posted):
-                continue
-            opts = j.get("apply_options") or []
-            link = (opts[0].get("link") if opts else "") or j.get("share_link", "")
-            via = j.get("via", "")
-            it = {
-                "id": id_from_link(link, "gjobs"),
-                "source": "Google Jobs" + (f" ({via})" if via else ""), "query": jq,
-                "title": j.get("title", ""), "company": j.get("company_name", ""),
-                "location": j.get("location", ""), "postedAt": posted,
-                "salary": str(ext.get("salary", "")), "link": link,
-                "description": j.get("description", ""),
-            }
-            items.append(it)
-    status["results"] = len(items)
-    status["note"] = " | ".join(errors)
-    return status, items
+def serpapi(status):
+    cfg = CONFIG["serpapi"]
+    status["serp"] = {"searches": 0, "google": 0, "jobs": 0, "errors": [], "stopped": ""}
+    cands = []
+    seen_links = set()
+    try:
+        for q in cfg.get("google_jobs_queries", []):
+            data = serp_call({"engine": "google_jobs", "q": q, "location": cfg["location"]}, status)
+            for j in (data or {}).get("jobs_results", []):
+                c = google_job(j)
+                if c and c["link"] not in seen_links and not excluded(c["title"]):
+                    seen_links.add(c["link"])
+                    cands.append(c)
+                    status["serp"]["jobs"] += 1
+        fetches = 0
+        for q in cfg.get("google_queries", []):
+            data = serp_call({"engine": "google", "q": q, "location": cfg["location"],
+                              "tbs": "qdr:d", "num": 20}, status)
+            for res in (data or {}).get("organic_results", []):
+                link = res.get("link", "")
+                title = clean(res.get("title", ""))
+                if not link or link in seen_links or excluded(title):
+                    continue
+                if any(re.search(p, link) for p in LISTING_PATTERNS):
+                    continue
+                seen_links.add(link)
+                cid = safe_id("google", hashlib.sha1(link.encode()).hexdigest()[:12])
+                cand = {"id": cid, "title": title, "company": "", "location": "",
+                        "date": clean(res.get("date", "")), "salary": "",
+                        "source": "Google (SerpAPI)", "link": link, "has_body": False}
+                if (OFFERS / f"{cid}.md").exists():
+                    cand["has_body"] = True
+                elif fetches < cfg.get("max_page_fetches", 10):
+                    fetches += 1
+                    body = fetch_page_text(link)
+                    cand["has_body"] = save_offer(cid, cand, body or "")
+                cands.append(cand)
+                status["serp"]["google"] += 1
+    except SerpStop as e:
+        status["serp"]["stopped"] = str(e)
+    return cands
+
+
+def google_job(j):
+    title = clean(j.get("title"))
+    if not title:
+        return None
+    opts = j.get("apply_options") or []
+    link = (opts[0].get("link") if opts else "") or j.get("share_link") or ""
+    if not link:
+        return None
+    via = clean(j.get("via", "")).replace("przez ", "").replace("via ", "")
+    ext = j.get("detected_extensions") or {}
+    raw_id = j.get("job_id", "") or link
+    cid = safe_id("gjobs", hashlib.sha1(raw_id.encode()).hexdigest()[:12])
+    cand = {
+        "id": cid, "title": title, "company": clean(j.get("company_name")),
+        "location": clean(j.get("location")), "date": clean(ext.get("posted_at", "")),
+        "salary": clean(ext.get("salary", "")),
+        "source": f"Google Jobs (via {via})" if via else "Google Jobs",
+        "link": link, "has_body": False,
+        "extra": {"Inne linki do aplikowania": ", ".join(o.get("link", "") for o in opts[1:4])} if len(opts) > 1 else None,
+    }
+    cand["has_body"] = (OFFERS / f"{cid}.md").exists() or save_offer(cid, cand, j.get("description", ""))
+    return cand
+
+
+def fetch_page_text(url):
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=30)
+        if r.status_code != 200 or "text/html" not in r.headers.get("content-type", ""):
+            return ""
+        return html_to_text(r.text)
+    except requests.RequestException:
+        return ""
 
 
 # ---------------------------------------------------------------- zapis
-def write_offer_file(it, details=None):
-    os.makedirs(OFFERS_DIR, exist_ok=True)
-    d = details or {}
-    lines = [f"# {d.get('title') or it.get('title','')}", "",
-             f"- id: {it['id']}",
-             f"- firma: {d.get('company') or it.get('company','')}",
-             f"- lokalizacja: {d.get('location') or it.get('location','')}",
-             f"- źródło: {it.get('source','')}",
-             f"- link: {it.get('link','')}",
-             f"- opublikowano: {it.get('postedAt','')} {('(' + d['postedAgo'] + ')') if d.get('postedAgo') else ''}".rstrip(),
-             f"- wynagrodzenie: {d.get('salary') or it.get('salary') or 'brak w ogłoszeniu'}",
-             f"- pobrano: {NOW.isoformat()}"]
-    for c in d.get("criteria", []):
-        lines.append(f"- {c}")
-    desc = d.get("description") or it.get("description") or it.get("snippet") or ""
-    lines += ["", "## Treść ogłoszenia", "", desc[:12000] or "(brak treści)"]
-    with open(os.path.join(OFFERS_DIR, it["id"] + ".md"), "w", encoding="utf-8") as f:
-        f.write("\n".join(lines) + "\n")
+def dedupe(items):
+    out = []
+    for i in items:
+        if i not in out:
+            out.append(i)
+    return out
+
+
+def load_seen():
+    """Wczytaj seen.json odpornie na inne/stare formaty (wartość: data albo obiekt z datą)."""
+    try:
+        raw = json.loads(SEEN_FILE.read_text(encoding="utf-8")) if SEEN_FILE.exists() else {}
+    except (ValueError, OSError):
+        return {}
+    items = raw.items() if isinstance(raw, dict) else []
+    out = {}
+    for k, v in items:
+        if isinstance(v, dict):
+            v = next((v.get(f) for f in ("first", "first_seen", "firstSeen", "date", "seen")
+                      if isinstance(v.get(f), str)), "")
+        if isinstance(v, str) and re.match(r"\d{4}-\d{2}-\d{2}", v):
+            out[str(k)] = v[:10]
+    return out
 
 
 def main():
-    cfg = load_json(os.path.join(ROOT, "config.json"), {})
-    os.makedirs(OFFERS_DIR, exist_ok=True)
-    seen_path = os.path.join(DATA, "seen.json")
-    seen = load_json(seen_path, {})
-    inc = re.compile(cfg.get("includeTitle", "."), re.I)
-    exc = re.compile(cfg.get("excludeTitle", "(?!x)x"), re.I)
-    inc_google = re.compile(cfg.get("includeTitleGoogle", cfg.get("includeTitle", ".")), re.I)
+    OFFERS.mkdir(parents=True, exist_ok=True)
+    seen = load_seen()
+    status = {}
+    started = now_utc()
 
-    status = {"runAt": NOW.isoformat(), "linkedin": {}, "serp": {"ran": False}}
+    try:
+        li = linkedin(status)
+    except Exception as e:  # nie przerywaj całego przebiegu
+        li = []
+        status["linkedin"] = {"requests": 0, "count": 0, "errors": [f"wyjątek: {type(e).__name__}: {e}"]}
+    try:
+        sp = serpapi(status)
+    except Exception as e:
+        sp = []
+        status.setdefault("serp", {"searches": 0, "google": 0, "jobs": 0, "errors": [], "stopped": ""})
+        status["serp"]["errors"].append(f"wyjątek: {type(e).__name__}: {e}")
 
-    # --- LinkedIn
-    li = {"found": 0, "matched": 0, "new": 0, "details": 0, "note": ""}
-    collected = {}
-    for q in cfg.get("linkedinQueries", []):
-        code, items = linkedin_search(q, cfg.get("location", "Warszawa"))
-        if code != 200:
-            li["note"] = f"LinkedIn zwrócił kod {code} dla frazy '{q}' – przerwano wyszukiwanie LinkedIn."
-            log(li["note"])
-            break
-        li["found"] += len(items)
-        for it in items:
-            t = it["title"]
-            if exc.search(t) or not inc.search(t):
-                continue
-            collected.setdefault(it["id"], it)
-        time.sleep(2)
-    li["matched"] = len(collected)
+    today = started.astimezone(TZ).strftime("%Y-%m-%d")
+    for c in li + sp:
+        seen.setdefault(c["id"], today)
+    # sprzątanie: zapomnij kandydatów starszych niż 60 dni
+    cutoff = (started - timedelta(days=60)).astimezone(TZ).strftime("%Y-%m-%d")
+    seen = {k: v for k, v in seen.items() if v >= cutoff}
+    SEEN_FILE.write_text(json.dumps(seen, ensure_ascii=False, indent=1, sort_keys=True), encoding="utf-8")
 
-    details_left = int(cfg.get("maxDetailsPerRun", 30))
-    for oid, it in collected.items():
-        if oid in seen:
-            seen[oid]["lastSeen"] = NOW.isoformat()
-            continue
-        li["new"] += 1
-        det = None
-        if details_left > 0:
-            code, det = linkedin_details(oid.split("-", 1)[1])
-            details_left -= 1
-            if det:
-                li["details"] += 1
-                write_offer_file(it, det)
-            elif code in (429, 999):
-                li["note"] = (li["note"] + f" Treść ogłoszeń: LinkedIn zwrócił {code} (limit).").strip()
-                details_left = 0
-            time.sleep(2)
-        it["hasDetails"] = bool(det)
-        it["firstSeen"] = NOW.isoformat()
-        it["lastSeen"] = NOW.isoformat()
-        seen[oid] = it
-    status["linkedin"] = li
+    L = status["linkedin"]
+    S = status["serp"]
+    li_state = "BŁĄD" if (L["errors"] and L["count"] == 0) else ("OK z uwagami" if L["errors"] else "OK")
+    sp_state = "BŁĄD" if S.get("stopped") and not sp else ("OK z uwagami" if (S.get("stopped") or S["errors"]) else "OK")
+    sp_errs = ([S["stopped"]] if S.get("stopped") else []) + dedupe(S["errors"])
 
-    # --- SerpAPI
-    key = os.environ.get("SERPAPI_KEY", "").strip()
-    if os.environ.get("RUN_SERP", "").lower() == "true":
-        if not key:
-            status["serp"] = {"ran": False, "note": "Brak sekretu SERPAPI_KEY w repozytorium."}
-        else:
-            sst, sitems = run_serp(cfg, key)
-            new = 0
-            for it in sitems:
-                if exc.search(it["title"] or ""):
-                    continue
-                if it["source"].startswith("Google (") and not inc_google.search(it["title"] or ""):
-                    continue
-                if it["id"] in seen:
-                    seen[it["id"]]["lastSeen"] = NOW.isoformat()
-                    continue
-                new += 1
-                it["hasDetails"] = bool(it.get("description"))
-                if it["hasDetails"]:
-                    write_offer_file(it)
-                it.pop("description", None)
-                it["firstSeen"] = it["lastSeen"] = NOW.isoformat()
-                seen[it["id"]] = it
-            sst["new"] = new
-            status["serp"] = sst
-    else:
-        status["serp"] = {"ran": False, "note": "SerpAPI pominięte (ręczne uruchomienie bez zaznaczonej opcji SerpAPI)."}
-
-    # --- porządki: usuń śmieciowe wyniki Google z wcześniejszych przebiegów
-    for oid in list(seen):
-        v = seen[oid]
-        if str(v.get("source", "")).startswith("Google (") and (not is_single_offer(v) or not inc_google.search(v.get("title") or "")):
-            del seen[oid]
-
-    # --- porządki: usuń stare wpisy i pliki
-    keep_after = NOW - dt.timedelta(days=int(cfg.get("keepDays", 14)))
-    for oid in list(seen):
-        try:
-            ls = dt.datetime.fromisoformat(seen[oid].get("lastSeen") or seen[oid].get("firstSeen"))
-        except Exception:
-            ls = NOW
-        if ls < keep_after:
-            del seen[oid]
-    for fn in os.listdir(OFFERS_DIR):
-        if fn.endswith(".md") and fn[:-3] not in seen:
-            os.remove(os.path.join(OFFERS_DIR, fn))
-    save_json(seen_path, seen)
-    save_json(os.path.join(DATA, "status.json"), status)
-
-    # --- lista dla Claude'a
-    list_after = NOW - dt.timedelta(days=int(cfg.get("listDays", 3)))
-    recent = [v for v in seen.values()
-              if dt.datetime.fromisoformat(v["firstSeen"]) >= list_after]
-    recent.sort(key=lambda v: v["firstSeen"], reverse=True)
-    s = status["serp"]
+    local = started.astimezone(TZ)
     out = [
-        "# Radar ofert logistyki – kandydaci",
+        "# Kandydaci – Radar ofert logistyki",
         "",
-        f"Ostatni przebieg: {status['runAt']} (UTC)",
-        f"LinkedIn: znaleziono {li['found']}, pasujących tytułów {li['matched']}, nowych {li['new']}, pobranych treści {li['details']}. {li['note']}".rstrip(),
-        ("SerpAPI: wyszukiwań {searches}, wyników {results}, nowych {new}. {note}".format(
-            searches=s.get("searches", 0), results=s.get("results", 0), new=s.get("new", 0), note=s.get("note", ""))
-         if s.get("ran") else f"SerpAPI: nie uruchomiono. {s.get('note','')}").rstrip(),
-        f"Kandydaci z ostatnich {cfg.get('listDays', 3)} dni: {len(recent)}",
-        "Treść ogłoszenia (gdy jest): plik oferty/<id>.md w tym samym katalogu.",
+        f"Ostatni przebieg: {local.strftime('%Y-%m-%d %H:%M')} (Europe/Warsaw) = {started.strftime('%Y-%m-%dT%H:%M:%SZ')}",
+        f"LinkedIn: {li_state} – kandydatów: {L['count']}, zapytań HTTP: {L['requests']}; błędy: {'; '.join(L['errors'][:5]) or 'brak'}",
+        f"SerpAPI: {sp_state} – wyszukiwań SerpAPI: {S['searches']}, kandydatów: {len(sp)} (Google: {S['google']}, Google Jobs: {S['jobs']}); błędy: {'; '.join(sp_errs[:5]) or 'brak'}",
+        "",
+        "Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link",
         "",
     ]
-    for v in recent:
-        out.append("- {id} | {title} | {company} | {loc} | opubl. {posted} | wynagr.: {sal} | {src} | pierwszy raz: {fs} | treść: {det} | {link}".format(
-            id=v["id"], title=v.get("title", ""), company=v.get("company", ""), loc=v.get("location", ""),
-            posted=v.get("postedAt", "") or "?", sal=v.get("salary", "") or "-", src=v.get("source", ""),
-            fs=v["firstSeen"][:16], det="tak" if v.get("hasDetails") else "nie", link=v.get("link", "")))
-    with open(os.path.join(DATA, "kandydaci.md"), "w", encoding="utf-8") as f:
-        f.write("\n".join(out) + "\n")
-    log("\n".join(out[:6]))
+    for c in li + sp:
+        out.append(" | ".join([
+            c["id"], cell(c["title"]), cell(c["company"]), cell(c["location"]), cell(c["date"]),
+            cell(c["salary"]), cell(c["source"]), seen.get(c["id"], today),
+            f"treść: {'tak' if c['has_body'] else 'nie'}", c["link"],
+        ]))
+    if not (li or sp):
+        out.append("(brak kandydatów w tym przebiegu)")
+    (DATA / "kandydaci.md").write_text("\n".join(out) + "\n", encoding="utf-8")
+
+    # usuń zapisane treści ofert, o których seen.json już zapomniał (> 60 dni)
+    for f in OFFERS.glob("*.md"):
+        if f.stem not in seen:
+            f.unlink()
+
+    print("\n".join(out[:5]))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
