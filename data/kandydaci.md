@@ -1,8 +1,8 @@
 # Kandydaci – radar ofert logistyki
 
-Ostatni przebieg: 2026-09-27 22:44 (Europe/Warsaw), 2026-09-27T20:46Z UTC
+Ostatni przebieg: 2026-09-27 22:49 (Europe/Warsaw), 2026-09-27T20:53Z UTC
 LinkedIn: 24 kandydatów, 9 zapytań, błędy: brak
-SerpAPI: 1 kandydatów, 5 wyszukiwań (Google Jobs: wariant -), błędy: google_jobs: ReadTimeout; Google Jobs: żaden wariant (us-en, de-en, us-pl) nie zwrócił ofert – pomijam Google Jobs
+SerpAPI: 1 kandydatów, 5 wyszukiwań (Google Jobs: żaden wariant (us-en, de-en, us-pl) nie zwrócił ofert – wyłączony do 2026-10-11, żeby nie zużywać limitu), błędy: brak
 Łącznie: 25 kandydatów
 
 Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link
@@ -12,7 +12,6 @@ linkedin-4385079761 | Senior Konsultant_ka SAP TM | EY | Warszawa | 2026-09-27 |
 linkedin-4472460640 | Specjalista ds. Koordynacji Warsztatowej (K/M) | LOT Aircraft Maintenance Services | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/specjalista-ds-koordynacji-warsztatowej-k-m-at-lot-aircraft-maintenance-services-4472460640
 linkedin-4406091555 | Senior SAP PP/DS Consultant / Poland | Deloitte | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/senior-sap-pp-ds-consultant-poland-at-deloitte-4406091555
 linkedin-4436479105 | konsultant / konsultantka ds. projektowania kontenerów do biomasy / IRS 50592 (ILU) | Deutsche Bahn | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/konsultant-konsultantka-ds-projektowania-kontener%C3%B3w-do-biomasy-irs-50592-ilu-at-deutsche-bahn-4436479105
-linkedin-4470808851 | Spedytor międzynarodowy | Esde Logistics Sp. z o.o. | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/spedytor-mi%C4%99dzynarodowy-at-esde-logistics-sp-z-o-o-4470808851
 linkedin-4427577781 | LSS Process Automation Project Manager m/f/d | Honeywell Technologies | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/lss-process-automation-project-manager-m-f-d-at-honeywell-technologies-4427577781
 linkedin-4385081437 | SAP Data Migration Manager | EY | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/sap-data-migration-manager-at-ey-4385081437
 linkedin-4472432618 | Pracownik / Pracowniczka Magazynu i Wydań Towaru | Praca.pl | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/pracownik-pracowniczka-magazynu-i-wyda%C5%84-towaru-at-praca-pl-4472432618
@@ -31,4 +30,5 @@ linkedin-4470811059 | Manager, Regulatory Information Management & Innovation | 
 linkedin-4444380371 | Services Program Manager (PCB/EDM) - (m/d/f) | Siemens EDA (Siemens Digital Industries Software) | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/services-program-manager-pcb-edm-m-d-f-at-siemens-eda-siemens-digital-industries-software-4444380371
 linkedin-4461829919 | Clinical Trial Coordinator | Thermo Fisher Scientific | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/clinical-trial-coordinator-at-thermo-fisher-scientific-4461829919
 linkedin-4385096300 | Konsultant_ka SAP Treasury | EY | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/konsultant-ka-sap-treasury-at-ey-4385096300
-gowork-pl-cba7500606 | Praca - asystentka / rejestracja - Centrum Psychologiczne | ? | ? | 18 godzin temu | - | Google (SerpAPI) | 2026-09-27 | treść: nie | https://www.gowork.pl/oferta-zewnetrzna/praca-asystentka-rejestracja-centrum-psychologiczne,lento.plc930c657fb8236b3af6063d4cfdc17a5,olesnica
+linkedin-4470808851 | Spedytor międzynarodowy | Esde Logistics Sp. z o.o. | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/spedytor-mi%C4%99dzynarodowy-at-esde-logistics-sp-z-o-o-4470808851
+olx-pl-f35f3e33aa | Praca Blachownia - najnowsze oferty | ? | ? | 10 godzin temu | - | Google (SerpAPI) | 2026-09-27 | treść: nie | https://www.olx.pl/praca/blachownia/?srsltid=AU7gw4XElCBMi0FqQIBsTFjz8KqX9quGvXjOpZSF3ok9KNcwd_f_TBEW
