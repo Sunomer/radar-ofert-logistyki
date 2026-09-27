@@ -1,22 +1,18 @@
-name: Radar ofert logistyki
+name: Radar ofert
 
 on:
   schedule:
-    # 05:07 UTC = 07:07 czasu letniego / 06:07 zimowego (przed przebiegiem Claude o 8:00)
-    - cron: "7 5 * * *"
+    # 05:05 UTC = 7:05 czasu letniego / 6:05 zimowego w Warszawie (GitHub bywa spóźniony do ~30 min)
+    - cron: "5 5 * * *"
   workflow_dispatch: {}
 
 permissions:
   contents: write
 
-concurrency:
-  group: radar
-  cancel-in-progress: false
-
 jobs:
   zbierz:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -24,18 +20,18 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Zależności
-        run: pip install -r requirements.txt
+      - name: Instaluj biblioteki
+        run: pip install requests beautifulsoup4
 
-      - name: Zbierz kandydatów (LinkedIn + SerpAPI)
+      - name: Zbierz oferty (LinkedIn + SerpAPI)
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
-        run: python scraper/radar.py
+        run: python scripts/radar.py
 
       - name: Zapisz wyniki w repozytorium
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
           git add data
-          git commit -m "Wyniki radaru $(date -u +%Y-%m-%dT%H:%MZ)" || echo "Brak zmian"
+          git commit -m "Wyniki radaru $(date -u +%F)" || echo "Brak zmian"
           git push
