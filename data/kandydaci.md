@@ -1,38 +1,35 @@
 # Kandydaci – Radar ofert logistyki
 
-Ostatni przebieg: 2026-09-26 09:38 (Europe/Warsaw) = 2026-09-26T07:38:41Z
-LinkedIn: OK – kandydatów: 27, zapytań HTTP: 9; błędy: brak
-SerpAPI: OK z uwagami – wyszukiwań SerpAPI: 5, kandydatów: 3 (Google: 3, Google Jobs: 0); błędy: Google Jobs „specjalista ds. optymalizacji procesów l”: kod 503: We couldn't get valid results for this search. Please try again later.; Google Jobs „continuous improvement specialist logist”: kod 503: We couldn't get valid results for this search. Please try again later.; Google Jobs „analityk logistyki Warszawa”: kod 503: We couldn't get valid results for this search. Please try again later.
+Ostatni przebieg: 2026-09-27 07:21 (Europe/Warsaw) = 2026-09-27T05:21:10Z
+LinkedIn: OK – kandydatów: 27, zapytań HTTP: 36; błędy: brak
+SerpAPI: OK z uwagami – wyszukiwań SerpAPI: 5, kandydatów: 0 (Google: 0, Google Jobs: 0); błędy: Google „job Warsaw "continuous improvement" logi”: kod 503: We couldn't get valid results for this search. Please try again later.; bez wyników: Google „oferta pracy Warszawa "ciągłego doskonal”, Google „oferta pracy Warszawa lean specjalista m”
 
 Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link
 
-linkedin-4442625683 | Specjalista ds. strumienia wartości (K/M) | TRUMPF w Polsce | Zielonka | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4442625683
-linkedin-4472007144 | Senior Operations Manager / Contract Logistics (K/M/Inni) | HRK S.A. | Woj. Mazowieckie, Polska | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472007144
-linkedin-4457391427 | Regional Operations Manager (m/f/d) | Flix | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4457391427
-linkedin-4461920070 | Senior Logistics Specialist with English - Ukraine | Brown-Forman | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4461920070
-linkedin-4470162098 | Koordynator/Koordynatorka Zespołu Serwisu Kurierskiego | InPost | Bronisze | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470162098
-linkedin-4470766968 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Belgium | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470766968
-linkedin-4470763533 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Logistics Poland | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470763533
-linkedin-4472023890 | Demand Planning & Fulfillment Coordinator (F/M/X) | Mondelēz International | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472023890
-linkedin-4471889557 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4471889557
-linkedin-4471889587 | Supply Chain and Manufacturing AI Senior Product Engineer | Mars | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4471889587
-linkedin-4453135364 | Warehouse Supervisor | JD.COM | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4453135364
-linkedin-4441145585 | Inżynier/Inżynierka Procesu (k/m/d) | Lear Corporation | Pruszków | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4441145585
-linkedin-4472086418 | Kierownik / Kierowniczka Hurtowni Pokryć Dachowych (M/K) | extraDACH | Grodzisk Mazowiecki | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4472086418
-linkedin-4470005031 | Digital Operations Director, Europe | Konecta Team for Coca-Cola | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4470005031
-linkedin-4467371084 | Pełnomocnik ds. Systemów Jakości - Branża Kosmetyczna | MG Evolution® Manufacturer of Cosmetics and Medical Devices Poland | Warszawa i okolice | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4467371084
-linkedin-4461968168 | Process Engineer | BorgWarner | Błonie | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4461968168
-linkedin-4451692689 | Manufacturing Process Engineer - Injection Moulding (m/f/d) | Lear Corporation | Pruszków | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4451692689
-linkedin-4470321595 | L’Oréal SeedZ Program / Kickstart your Finance Career 🚀 | L'Oréal | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470321595
-linkedin-4470160891 | Process Quality & Improvement Manager / Process Quality & Improvement Managerka - Warszawa (Mazowieckie), Polska K/M | Astek | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4470160891
-linkedin-4472011979 | Logistics Operations Specialist, Fixed-Term Contract | IKEA | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4472011979
-linkedin-4471887272 | Oracle EBS R12 Supply Chain Manufacturing Implementation SME | Us3 Consulting | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4471887272
-linkedin-4461955719 | Oral Healthcare Supply and Demand Planner | Haleon | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4461955719
-linkedin-4472017579 | Senior Order Management Specialist with German | Antal Poland | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4472017579
-linkedin-4470776503 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Belgium | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470776503
-linkedin-4470751969 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI Logistics Poland | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4470751969
-linkedin-4471896148 | Młodszy Koordynator Niewidzialnych Dostaw | HAVI | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-26 | treść: tak | https://pl.linkedin.com/jobs/view/4471896148
-linkedin-4470165356 | Junior Supply Planner | Orangina Suntory France | Warszawa | 2026-09-25 | - | LinkedIn | 2026-09-25 | treść: tak | https://pl.linkedin.com/jobs/view/4470165356
-google-1565c51f511d | Praca Analityk / Analityczka IT, Warszawa, Leroy Merlin ... | - | - | 22 godziny temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://www.praca.pl/analityk-analityczka-it_11512711.html
-google-43dfc8d2c6ee | Operator kontroli - praca wyjazdowa (f/m/x) - Sii | - | - | 9 godzin temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://rocketjobs.pl/oferta-pracy/sii-operator-kontroli---praca-wyjazdowa-f-m-x--szczecin-logistyka-inne
-google-48305265c4b4 | Specjalista / Specjalistka ds. SEO i Content Marketingu | - | - | 4 godziny temu | - | Google (SerpAPI) | 2026-09-26 | treść: tak | https://www.praca.pl/specjalista-specjalistka-ds-seo-i-content-marketingu_11449714.html
+linkedin-4463654176 | Associate Operations Manager, Supply Acquisition & Activation | Wolt | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4463654176
+linkedin-4454017770 | Logistic Specialist | Red Bull | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4454017770
+linkedin-4453599404 | Specjalista / Specjalistka ds. Wsparcia Operacyjnego (M/K/N) | DSV - Global Transport and Logistics | Warszawa i okolice | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4453599404
+linkedin-4454067173 | Senior Manager Demand Planning & S&OP - IT Business Partnering (m/f/d) | Sonova Group | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4454067173
+linkedin-4443793939 | Customer Service & Logistic Specialist - Eastern Europe | Xylem | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4443793939
+linkedin-4472299628 | Koordynator / Koordynatorka Działu Części i Akcesoriów | AUTO FUS GROUP | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4472299628
+linkedin-4463661240 | Specjalista ds. jakości dostawców (K/M/N) | Valeo | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4463661240
+linkedin-4435697180 | Principal Consultant - SAP QM | Infosys | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4435697180
+linkedin-4451216846 | SAP Data Migration Lead – S/4HANA Projects / Poland | Deloitte | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4451216846
+linkedin-4461989796 | Senior Manager, Application Lifecycle (M/F/D) | DSV - Global Transport and Logistics | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4461989796
+linkedin-4453207825 | Brygadzista obszaru produkcji SMT/THT (k/m) | TRUMPF w Polsce | Zielonka | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4453207825
+linkedin-4461172723 | Lead - HR Operational Excellence | Elanco | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4461172723
+linkedin-4463387119 | Senior Software Engineer, Storage Platform | Box | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4463387119
+linkedin-4472400642 | Operator Maszyn Pakujących / Operatorka Maszyn Pakujących | Computer Alliance Sp. z o.o. | Grodzisk Mazowiecki | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4472400642
+linkedin-4463386961 | Manager AI Business Solutions | Sonova Group | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4463386961
+linkedin-4436316167 | Product Business Developer Photo, Polish market | Canon EMEA | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4436316167
+linkedin-4471065810 | Graduate growth manager | Bending Spoons | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4471065810
+linkedin-4441826206 | (K / M) Quality Engineering Transformation Lead - Praca zdalna K/M | Astek | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4441826206
+linkedin-4064311074 | Konserwator Urządzeń Dźwigowych | KONE | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4064311074
+linkedin-4471086016 | Growth manager | Bending Spoons | Warszawa | 2026-09-27 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4471086016
+linkedin-4454572673 | Field Account Manager Running / Training | PUMA Group | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4454572673
+linkedin-4472293832 | Technik / Techniczka Serwisu Instalacji Sanitarno-Grzewczych | Praca.pl | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4472293832
+linkedin-4426658449 | Lead Procurement Engineer | Westinghouse Electric Company | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4426658449
+linkedin-4424884560 | Specjalista/Specjalistka ds. Obsługi Klienta (praca biurowo-magazynowa) | InPost | Powiat Pruszkowski | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4424884560
+linkedin-4472412207 | Category Manager / Category Managerka | Linux Polska Sp. z o.o. | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4472412207
+linkedin-4452944058 | Junior Category Manager (k/m) | TRUMPF w Polsce | Zielonka | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4452944058
+linkedin-4436120379 | Programs and Solutions Lead - Digital and Tech Category (Procurement) | Roche | Warszawa | 2026-09-26 | - | LinkedIn | 2026-09-27 | treść: tak | https://pl.linkedin.com/jobs/view/4436120379
