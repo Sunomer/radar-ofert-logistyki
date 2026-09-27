@@ -33,13 +33,15 @@ LI_LOCATION = "Warszawa, Mazowieckie, Polska"
 LI_DISTANCE_MILES = "25"  # ok. 40 km
 # SerpAPI ma miesięczny limit wyszukiwań – dlatego tylko kilka zapytań dziennie.
 SERP_JOBS_QUERIES = [
-    "specjalista optymalizacja procesów logistycznych",
-    "continuous improvement lean logistyka",
-    "analityk planista logistyki",
+    "continuous improvement logistics",
+    "logistics process specialist",
+    "logistics analyst planner",
 ]
 SERP_GOOGLE_QUERIES = [
-    'praca Warszawa "ciągłego doskonalenia" OR lean OR kaizen logistyka specjalista',
-    'praca Warszawa "optymalizacji procesów" OR "analityk logistyki" OR "planista logistyki"',
+    '(lean OR kaizen OR "ciągłego doskonalenia" OR "optymalizacji procesów") logistyka Warszawa '
+    '(site:praca.pl OR site:erecruiter.pl OR site:nofluffjobs.com OR site:theprotocol.it OR site:smartrecruiters.com)',
+    '("analityk logistyki" OR "planista logistyki" OR "specjalista ds. logistyki" OR "continuous improvement") Warszawa '
+    '(site:praca.pl OR site:erecruiter.pl OR site:smartrecruiters.com OR site:teamtailor.com OR site:traffit.com)',
 ]
 SERP_LOCATION = "Warsaw, Masovian Voivodeship, Poland"
 # Google Jobs nie obsługuje Polski (gl=pl → błąd 400, sama lokalizacja Warszawa → 503).
@@ -50,6 +52,8 @@ JOBS_VARIANTS = [
     {"name": "de-en", "suffix": " Warsaw Poland", "params": {"gl": "de", "hl": "en", "google_domain": "google.de"}},
     {"name": "us-pl", "suffix": " Warszawa", "params": {"gl": "us", "hl": "pl", "google_domain": "google.com"}},
 ]
+JOBS_PROBE_QUERY = "logistics specialist"
+JOBS_RETRY_DAYS = 14  # gdy żaden wariant nie działa – kolejna próba za 2 tygodnie
 NEAR_WARSAW = ("warsz", "warsaw", "varsovie", "warschau", "mazow", "masov", "pruszk", "piaseczn", "ożarów",
                "ozarow", "błoni", "bloni", "janki", "grodzisk", "legionow", "otwock", "marki", "ząbki", "zabki",
                "kobyłk", "kobylk", "zielonk", "nadarzyn", "raszyn", "łomiank", "lomiank", "józefów", "konstancin",
@@ -190,8 +194,16 @@ def serp_call(params, status):
     status["serp_searches"] += 1
     try:
         r = requests.get("https://serpapi.com/search.json",
-                         params={**params, "api_key": SERPAPI_KEY}, timeout=60)
+                         params={**params, "api_key": SERPAPI_KEY}, timeout=90)
         js = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+    except requests.Timeout:
+        try:  # jedno ponowienie po przekroczeniu czasu
+            r = requests.get("https://serpapi.com/search.json",
+                             params={**params, "api_key": SERPAPI_KEY}, timeout=90)
+            js = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+        except Exception as e:  # noqa: BLE001
+            status["serp_errors"].append(f"{params.get('engine')}: {type(e).__name__}")
+            return None
     except Exception as e:  # noqa: BLE001
         status["serp_errors"].append(f"{params.get('engine')}: {type(e).__name__}")
         return None
@@ -204,6 +216,35 @@ def serp_call(params, status):
     return js
 
 
+def add_jobs(cands, jobs):
+    n = 0
+    for j in jobs:
+        if not any(w in (j.get("location") or "").lower() for w in NEAR_WARSAW):
+            continue
+        opts = j.get("apply_options") or []
+        link = (opts[0].get("link") if opts else "") or j.get("share_link", "")
+        if not link:
+            continue
+        ext = j.get("detected_extensions") or {}
+        via = clean(j.get("via", "")).replace("przez ", "").replace("via ", "")
+        cid = id_from_url(link)
+        if not re.match(r"^(pracuj|linkedin|praca)-", cid):
+            cid = "gjobs-" + short_hash(j.get("job_id") or link, 12)
+        cands.append({
+            "id": cid,
+            "title": clean(j.get("title")),
+            "company": clean(j.get("company_name")),
+            "location": clean(j.get("location")),
+            "date": clean(ext.get("posted_at", "")),
+            "salary": clean(ext.get("salary", "")),
+            "source": f"Google Jobs (via {via})" if via else "Google Jobs",
+            "url": link,
+            "text": (j.get("description") or "").strip(),
+        })
+        n += 1
+    return n
+
+
 def serpapi(cands, status):
     if not SERPAPI_KEY:
         status["serp_errors"].append("brak klucza SERPAPI_KEY (sekret w repozytorium)")
@@ -213,63 +254,54 @@ def serpapi(cands, status):
         state = json.loads(state_file.read_text("utf-8"))
     except Exception:  # noqa: BLE001
         state = {}
-    names = [v["name"] for v in JOBS_VARIANTS]
-    start = names.index(state["jobs_variant"]) if state.get("jobs_variant") in names else 0
-    order = JOBS_VARIANTS[start:] + JOBS_VARIANTS[:start]
-    variant = None  # ustalony wariant (po pierwszym udanym zapytaniu)
 
     def fatal():
         return any(k in e for e in status["serp_errors"] for k in ("run out", "Invalid API key", "HTTP 401", "HTTP 429"))
 
-    for qi, q in enumerate(SERP_JOBS_QUERIES):
-        tries = [variant] if variant else order
-        jobs = []
-        probe_start = len(status["serp_errors"])
-        for v in tries:
-            js = serp_call({"engine": "google_jobs", "q": q + v["suffix"], **v["params"]}, status)
-            if fatal():
-                return
-            jobs = (js or {}).get("jobs_results") or []
-            if jobs:
-                if variant is None:
-                    variant = v
-                    state["jobs_variant"] = v["name"]
-                    state["jobs_ok_at"] = TODAY
-                    # błędy wcześniejszych, nieudanych wariantów to tylko próby – nie zgłaszamy ich
-                    status["serp_errors"][probe_start:] = []
-                break
-            if variant is not None:
-                break
-            time.sleep(1)
+    def jobs_call(q, v):
+        js = serp_call({"engine": "google_jobs", "q": q + v["suffix"], **v["params"]}, status)
+        return (js or {}).get("jobs_results") or []
+
+    by_name = {v["name"]: v for v in JOBS_VARIANTS}
+    variant = by_name.get(state.get("jobs_variant"))
+    if state.get("jobs_disabled_until", "") > TODAY:
+        status["jobs_info"] = f"wyłączony do {state['jobs_disabled_until']} (brak ofert dla Polski przy ostatniej próbie)"
+    else:
         if variant is None:
-            status["serp_errors"].append(
-                "Google Jobs: żaden wariant (" + ", ".join(names) + ") nie zwrócił ofert – pomijam Google Jobs")
-            break
-        status["jobs_variant"] = variant["name"] if variant else "brak"
-        for j in jobs:
-            if not any(w in (j.get("location") or "").lower() for w in NEAR_WARSAW):
-                continue
-            opts = j.get("apply_options") or []
-            link = (opts[0].get("link") if opts else "") or j.get("share_link", "")
-            if not link:
-                continue
-            ext = j.get("detected_extensions") or {}
-            via = clean(j.get("via", "")).replace("przez ", "").replace("via ", "")
-            cid = id_from_url(link)
-            if not re.match(r"^(pracuj|linkedin|praca)-", cid):
-                cid = "gjobs-" + short_hash(j.get("job_id") or link, 12)
-            cands.append({
-                "id": cid,
-                "title": clean(j.get("title")),
-                "company": clean(j.get("company_name")),
-                "location": clean(j.get("location")),
-                "date": clean(ext.get("posted_at", "")),
-                "salary": clean(ext.get("salary", "")),
-                "source": f"Google Jobs (via {via})" if via else "Google Jobs",
-                "url": link,
-                "text": (j.get("description") or "").strip(),
-            })
-        time.sleep(1)
+            # Próba: szerokie angielskie zapytanie w każdym wariancie, aż któryś zwróci oferty
+            probe_start = len(status["serp_errors"])
+            for v in JOBS_VARIANTS:
+                jobs = jobs_call(JOBS_PROBE_QUERY, v)
+                if fatal():
+                    return
+                if jobs:
+                    variant = v
+                    add_jobs(cands, jobs)
+                    status["serp_errors"][probe_start:] = []  # nieudane warianty to tylko próby
+                    break
+                time.sleep(1)
+            if variant is None:
+                until = (NOW.date() + dt.timedelta(days=JOBS_RETRY_DAYS)).isoformat()
+                state["jobs_disabled_until"] = until
+                status["serp_errors"][probe_start:] = []
+                status["jobs_info"] = (f"żaden wariant ({', '.join(by_name)}) nie zwrócił ofert – "
+                                       f"wyłączony do {until}, żeby nie zużywać limitu")
+            else:
+                state["jobs_variant"] = variant["name"]
+                state.pop("jobs_disabled_until", None)
+        if variant is not None:
+            found = 0
+            for q in SERP_JOBS_QUERIES:
+                found += add_jobs(cands, jobs_call(q, variant))
+                if fatal():
+                    return
+                time.sleep(1)
+            state["jobs_last_found"] = found
+            if found:
+                state["jobs_ok_at"] = TODAY
+            elif state.get("jobs_ok_at", "") < (NOW.date() - dt.timedelta(days=3)).isoformat():
+                state.pop("jobs_variant", None)  # 3 dni bez wyników – jutro ponowna próba wariantów
+            status["jobs_info"] = f"wariant {variant['name']}, ofert z okolic Warszawy: {found}"
     try:
         state_file.write_text(json.dumps(state, ensure_ascii=False, indent=1), "utf-8")
     except Exception:  # noqa: BLE001
@@ -373,7 +405,7 @@ def main():
         f"{dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H:%MZ')} UTC",
         f"LinkedIn: {n_li} kandydatów, {status['li_queries']} zapytań, błędy: {li_err}",
         f"SerpAPI: {n_serp} kandydatów, {status['serp_searches']} wyszukiwań "
-        f"(Google Jobs: wariant {status.get('jobs_variant', '-')}), błędy: {serp_err}",
+        f"(Google Jobs: {status.get('jobs_info', '-')}), błędy: {serp_err}",
         f"Łącznie: {len(uniq)} kandydatów",
         "",
         "Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link",
