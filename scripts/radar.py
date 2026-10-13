@@ -116,13 +116,37 @@ def page_text(html):
 
 
 # ---------------- LinkedIn ----------------
+LI_429_WAITS = (60, 120)  # sekundy oczekiwania przed kolejnymi próbami po HTTP 429
+LI_429_BUDGET = 360       # łączny limit czekania na cały przebieg (workflow ma timeout 20 min)
+_li_waited = 0
+
+
+def li_get(url, **kw):
+    """GET do LinkedIn; po HTTP 429 czeka (Retry-After albo LI_429_WAITS) i ponawia."""
+    global _li_waited
+    r = requests.get(url, **kw)
+    for wait in LI_429_WAITS:
+        if r.status_code != 429:
+            break
+        ra = r.headers.get("Retry-After", "")
+        delay = min(int(ra), 180) if ra.isdigit() else wait
+        if _li_waited + delay > LI_429_BUDGET:
+            print("LinkedIn HTTP 429 – wyczerpany limit czekania, poddaję się")
+            break
+        print(f"LinkedIn HTTP 429 – czekam {delay} s i ponawiam")
+        _li_waited += delay
+        time.sleep(delay)
+        r = requests.get(url, **kw)
+    return r
+
+
 def linkedin(cands, status):
     errors, queries = [], 0
     for q in QUERIES:
         for start in (0, 25):
             queries += 1
             try:
-                r = requests.get(
+                r = li_get(
                     "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search",
                     params={"keywords": q, "location": LI_LOCATION, "distance": LI_DISTANCE_MILES,
                             "f_TPR": "r86400", "start": start},
