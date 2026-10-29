@@ -1,0 +1,52 @@
+name: Newsy i cyberataki (SerpAPI)
+
+on:
+  schedule:
+    # 04:15, 10:15, 16:15 UTC = 5:15, 11:15, 17:15 zimą (6:15, 12:15, 18:15 latem) w Warszawie.
+    # Claude zbiera newsy i cyberataki ok. 30 minut później. GitHub bywa spóźniony do ~30 min.
+    - cron: "15 4,10,16 * * *"
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Słot: rano (3 wyszukiwania), poludnie lub wieczor (po 1)"
+        required: false
+        default: "poludnie"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zapis-danych
+  cancel-in-progress: false
+
+jobs:
+  zbierz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instaluj biblioteki
+        run: pip install requests
+
+      - name: Zbierz newsy i cyberataki (Google News przez SerpAPI)
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          RUN_SLOT: ${{ github.event.inputs.slot }}
+        run: python scripts/media.py
+
+      - name: Zapisz wyniki w repozytorium
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add data
+          git commit -m "Newsy i cyberataki $(date -u +%F\ %H:%M)" || { echo "Brak zmian"; exit 0; }
+          for i in 1 2 3; do
+            git pull --rebase -X theirs && git push && exit 0
+            sleep 10
+          done
+          exit 1
