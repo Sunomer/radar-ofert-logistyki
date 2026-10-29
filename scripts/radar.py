@@ -1,5 +1,5 @@
 """Radar ofert logistyki: zbiera kandydatów z LinkedIn (strony publiczne) i SerpAPI
-(Google z filtrem 24 h + Google Jobs) i zapisuje:
+(Google z filtrem 24 h; Google Jobs wyłączony na stałe) i zapisuje:
   data/kandydaci.md        – lista kandydatów z dzisiejszego przebiegu
   data/oferty/<id>.md      – treść ogłoszenia (jeśli udało się ją pobrać)
   data/seen.json           – kiedy dany kandydat pojawił się pierwszy raz
@@ -32,11 +32,6 @@ QUERIES = [
 LI_LOCATION = "Warszawa, Mazowieckie, Polska"
 LI_DISTANCE_MILES = "25"  # ok. 40 km
 # SerpAPI ma miesięczny limit wyszukiwań – dlatego tylko kilka zapytań dziennie.
-SERP_JOBS_QUERIES = [
-    "continuous improvement logistics",
-    "logistics process specialist",
-    "logistics analyst planner",
-]
 SERP_GOOGLE_QUERIES = [
     '(lean OR kaizen OR "ciągłego doskonalenia" OR "optymalizacji procesów") logistyka Warszawa '
     '(site:praca.pl OR site:erecruiter.pl OR site:nofluffjobs.com OR site:theprotocol.it OR site:smartrecruiters.com)',
@@ -44,16 +39,6 @@ SERP_GOOGLE_QUERIES = [
     '(site:praca.pl OR site:erecruiter.pl OR site:smartrecruiters.com OR site:teamtailor.com OR site:traffit.com)',
 ]
 SERP_LOCATION = "Warsaw, Masovian Voivodeship, Poland"
-# Google Jobs nie obsługuje Polski (gl=pl → błąd 400, sama lokalizacja Warszawa → 503).
-# Dlatego pytamy z obsługiwanego kraju, a miasto dopisujemy do zapytania.
-# Skrypt sam sprawdza warianty po kolei i zapamiętuje działający w data/serp_state.json.
-JOBS_VARIANTS = [
-    {"name": "us-en", "suffix": " Warsaw Poland", "params": {"gl": "us", "hl": "en", "google_domain": "google.com"}},
-    {"name": "de-en", "suffix": " Warsaw Poland", "params": {"gl": "de", "hl": "en", "google_domain": "google.de"}},
-    {"name": "us-pl", "suffix": " Warszawa", "params": {"gl": "us", "hl": "pl", "google_domain": "google.com"}},
-]
-JOBS_PROBE_QUERY = "logistics specialist"
-JOBS_RETRY_DAYS = 14  # gdy żaden wariant nie działa – kolejna próba za 2 tygodnie
 NEAR_WARSAW = ("warsz", "warsaw", "varsovie", "warschau", "mazow", "masov", "pruszk", "piaseczn", "ożarów",
                "ozarow", "błoni", "bloni", "janki", "grodzisk", "legionow", "otwock", "marki", "ząbki", "zabki",
                "kobyłk", "kobylk", "zielonk", "nadarzyn", "raszyn", "łomiank", "lomiank", "józefów", "konstancin",
@@ -240,96 +225,14 @@ def serp_call(params, status):
     return js
 
 
-def add_jobs(cands, jobs):
-    n = 0
-    for j in jobs:
-        if not any(w in (j.get("location") or "").lower() for w in NEAR_WARSAW):
-            continue
-        opts = j.get("apply_options") or []
-        link = (opts[0].get("link") if opts else "") or j.get("share_link", "")
-        if not link:
-            continue
-        ext = j.get("detected_extensions") or {}
-        via = clean(j.get("via", "")).replace("przez ", "").replace("via ", "")
-        cid = id_from_url(link)
-        if not re.match(r"^(pracuj|linkedin|praca)-", cid):
-            cid = "gjobs-" + short_hash(j.get("job_id") or link, 12)
-        cands.append({
-            "id": cid,
-            "title": clean(j.get("title")),
-            "company": clean(j.get("company_name")),
-            "location": clean(j.get("location")),
-            "date": clean(ext.get("posted_at", "")),
-            "salary": clean(ext.get("salary", "")),
-            "source": f"Google Jobs (via {via})" if via else "Google Jobs",
-            "url": link,
-            "text": (j.get("description") or "").strip(),
-        })
-        n += 1
-    return n
-
-
 def serpapi(cands, status):
     if not SERPAPI_KEY:
         status["serp_errors"].append("brak klucza SERPAPI_KEY (sekret w repozytorium)")
         return
-    state_file = DATA / "serp_state.json"
-    try:
-        state = json.loads(state_file.read_text("utf-8"))
-    except Exception:  # noqa: BLE001
-        state = {}
 
     def fatal():
         return any(k in e for e in status["serp_errors"] for k in ("run out", "Invalid API key", "HTTP 401", "HTTP 429"))
 
-    def jobs_call(q, v):
-        js = serp_call({"engine": "google_jobs", "q": q + v["suffix"], **v["params"]}, status)
-        return (js or {}).get("jobs_results") or []
-
-    by_name = {v["name"]: v for v in JOBS_VARIANTS}
-    variant = by_name.get(state.get("jobs_variant"))
-    if state.get("jobs_disabled_until", "") > TODAY:
-        status["jobs_info"] = f"wyłączony do {state['jobs_disabled_until']} (brak ofert dla Polski przy ostatniej próbie)"
-    else:
-        if variant is None:
-            # Próba: szerokie angielskie zapytanie w każdym wariancie, aż któryś zwróci oferty
-            probe_start = len(status["serp_errors"])
-            for v in JOBS_VARIANTS:
-                jobs = jobs_call(JOBS_PROBE_QUERY, v)
-                if fatal():
-                    return
-                if jobs:
-                    variant = v
-                    add_jobs(cands, jobs)
-                    status["serp_errors"][probe_start:] = []  # nieudane warianty to tylko próby
-                    break
-                time.sleep(1)
-            if variant is None:
-                until = (NOW.date() + dt.timedelta(days=JOBS_RETRY_DAYS)).isoformat()
-                state["jobs_disabled_until"] = until
-                status["serp_errors"][probe_start:] = []
-                status["jobs_info"] = (f"żaden wariant ({', '.join(by_name)}) nie zwrócił ofert – "
-                                       f"wyłączony do {until}, żeby nie zużywać limitu")
-            else:
-                state["jobs_variant"] = variant["name"]
-                state.pop("jobs_disabled_until", None)
-        if variant is not None:
-            found = 0
-            for q in SERP_JOBS_QUERIES:
-                found += add_jobs(cands, jobs_call(q, variant))
-                if fatal():
-                    return
-                time.sleep(1)
-            state["jobs_last_found"] = found
-            if found:
-                state["jobs_ok_at"] = TODAY
-            elif state.get("jobs_ok_at", "") < (NOW.date() - dt.timedelta(days=3)).isoformat():
-                state.pop("jobs_variant", None)  # 3 dni bez wyników – jutro ponowna próba wariantów
-            status["jobs_info"] = f"wariant {variant['name']}, ofert z okolic Warszawy: {found}"
-    try:
-        state_file.write_text(json.dumps(state, ensure_ascii=False, indent=1), "utf-8")
-    except Exception:  # noqa: BLE001
-        pass
     for q in SERP_GOOGLE_QUERIES:
         js = serp_call({"engine": "google", "q": q, "tbs": "qdr:d", "hl": "pl", "gl": "pl",
                         "google_domain": "google.pl", "num": 20, "location": SERP_LOCATION}, status)
@@ -352,6 +255,22 @@ def serpapi(cands, status):
                 "url": link,
                 "detail": ("page", link),
             })
+
+
+# ---------------- licznik zużycia SerpAPI ----------------
+def bump_usage(kind, n):
+    """Zlicza wyszukiwania SerpAPI w bieżącym miesiącu (data/serp_usage.json), wspólnie z scripts/media.py."""
+    f = DATA / "serp_usage.json"
+    try:
+        u = json.loads(f.read_text("utf-8"))
+    except Exception:  # noqa: BLE001
+        u = {}
+    month = NOW.strftime("%Y-%m")
+    m = u.setdefault(month, {})
+    m[kind] = m.get(kind, 0) + int(n or 0)
+    m["razem"] = sum(v for k, v in m.items() if k != "razem")
+    u = {k: v for k, v in u.items() if k >= (NOW.date() - dt.timedelta(days=120)).strftime("%Y-%m")}
+    f.write_text(json.dumps(u, ensure_ascii=False, indent=1, sort_keys=True), "utf-8")
 
 
 # ---------------- zapis ----------------
@@ -428,8 +347,8 @@ def main():
         f"Ostatni przebieg: {NOW.strftime('%Y-%m-%d %H:%M')} (Europe/Warsaw), "
         f"{dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H:%MZ')} UTC",
         f"LinkedIn: {n_li} kandydatów, {status['li_queries']} zapytań, błędy: {li_err}",
-        f"SerpAPI: {n_serp} kandydatów, {status['serp_searches']} wyszukiwań "
-        f"(Google Jobs: {status.get('jobs_info', '-')}), błędy: {serp_err}",
+        f"SerpAPI: {n_serp} kandydatów, {status['serp_searches']} wyszukiwań Google "
+        f"(Google Jobs wyłączony), błędy: {serp_err}",
         f"Łącznie: {len(uniq)} kandydatów",
         "",
         "Format: id | stanowisko | firma | lokalizacja | data | wynagrodzenie | źródło | pierwszy raz | treść: tak/nie | link",
@@ -442,6 +361,7 @@ def main():
             "treść: " + ("tak" if c.get("has_text") else "nie"), c["url"],
         ]))
     (DATA / "kandydaci.md").write_text("\n".join(out) + "\n", "utf-8")
+    bump_usage("oferty", status["serp_searches"])
     print("\n".join(out[:8]))
 
 
