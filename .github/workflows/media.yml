@@ -2,9 +2,12 @@ name: Newsy i cyberataki (SerpAPI)
 
 on:
   schedule:
-    # 04:15, 10:15, 16:15 UTC = 5:15, 11:15, 17:15 zimą (6:15, 12:15, 18:15 latem) w Warszawie.
-    # Claude zbiera newsy i cyberataki ok. 30 minut później. GitHub bywa spóźniony do ~30 min.
-    - cron: "15 4,10,16 * * *"
+    # Cel: wyniki gotowe przed 6:00, 12:00 i 18:00 w Warszawie.
+    # Skrypt ma ruszyć ok. 4:40, 10:40 i 16:40 czasu polskiego (GitHub bywa spóźniony do ~30 min),
+    # a Claude czyta wyniki ok. 5:22, 11:22 i 17:22.
+    # GitHub liczy godziny w UTC, więc są dwa zestawy – krok „Sprawdź porę roku” uruchamia tylko właściwy.
+    - cron: "40 3,9,15 * * *"   # czas zimowy (UTC+1)
+    - cron: "40 2,8,14 * * *"   # czas letni (UTC+2)
   workflow_dispatch:
     inputs:
       slot:
@@ -24,22 +27,39 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Sprawdź porę roku
+        id: pora
+        run: |
+          OFFSET=$(TZ=Europe/Warsaw date +%z)
+          RUN=yes
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "$OFFSET" = "+0100" ] && [ "${{ github.event.schedule }}" != "40 3,9,15 * * *" ]; then RUN=no; fi
+            if [ "$OFFSET" = "+0200" ] && [ "${{ github.event.schedule }}" != "40 2,8,14 * * *" ]; then RUN=no; fi
+          fi
+          echo "Warszawa UTC$OFFSET, harmonogram: ${{ github.event.schedule }}, uruchamiam: $RUN"
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
+        if: steps.pora.outputs.run == 'yes'
 
       - uses: actions/setup-python@v5
+        if: steps.pora.outputs.run == 'yes'
         with:
           python-version: "3.12"
 
       - name: Instaluj biblioteki
+        if: steps.pora.outputs.run == 'yes'
         run: pip install requests
 
       - name: Zbierz newsy i cyberataki (Google News przez SerpAPI)
+        if: steps.pora.outputs.run == 'yes'
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           RUN_SLOT: ${{ github.event.inputs.slot }}
         run: python scripts/media.py
 
       - name: Zapisz wyniki w repozytorium
+        if: steps.pora.outputs.run == 'yes'
         run: |
           git config user.name "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
