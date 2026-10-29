@@ -1,6 +1,6 @@
 """Newsy i cyberataki przez SerpAPI (Google News) dla zakładek „Newsy” i „Cyberataki”.
 
-Uruchamiany 3 razy dziennie przez .github/workflows/media.yml. Zapisuje:
+Uruchamiany 3 razy dziennie (ok. 4:40, 10:40, 16:40 w Warszawie) przez .github/workflows/media.yml. Zapisuje:
   data/media/newsy.md   – kandydaci na newsy (elektronika i gry) z ostatnich ~3 dni
   data/media/cyber.md   – kandydaci na cyberataki z ostatnich ~3 dni
   data/media/seen.json  – kiedy dany link pojawił się pierwszy raz
