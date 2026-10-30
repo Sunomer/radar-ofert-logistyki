@@ -1,5 +1,77 @@
 [
  {
+  "id": "4bed77fe9f",
+  "title": "Florida Department of Education reports data breach affecting 4.9 million people",
+  "source": "WPBF",
+  "date": "2 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAEStgEB6zswFTbecpsPIDpbvgEhbBA78RbIYoxZ3zs9Q8xiC7s06l4BxrTbzOWEbI1zi5a4dfRmQm7IdWLaFFmZ0PDvA60f5iUZTznYsIAQZenQKq4drrt41gNo0Q9xyXmWX5VlMGYDM1V5HjzwaTSpaBVhpJGZEWjQVhpH5EVHFB1QJwd5ZzPb3eSmD46C1IhJFOao5q4-XyJ0TH62TC3lqQo0xqmCkn6jLRTFjIz21f-q1nzjrfHRrQ",
+  "snippet": "A data breach of the Florida Department of Education's financial aid website has compromised personal information, including Social Security numbers,..."
+ },
+ {
+  "id": "178920df4b",
+  "title": "FDD urges NIST, NSA to evaluate vaultless, keyless pseudonymization as safeguard against ransomware attacks",
+  "source": "Industrial Cyber",
+  "date": "3 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESzAEB6zswFVD976eeoRSKlZsip5xPNVKXTHJ5Mqa5wC23BTpkgUsApah5NwVvNgxGgh3xX8Mbyhy4Z6q0znUTOAzA6_HHixSirvvwZjz4oW6laNjygZ9KjRAl11lo7iRxXJV7PjOgh7AdFYou7PsWOWvOTyGVlQ9Gijm2aRr_mfV592BrnoJ-tLViVrAUN1gi3fVTgbTDMiZk5kbZJqIJsImY9A2NwoWmUbdYFCHC28MKFJ7H7_DowVFyLnvjYv11I6RqRe6Zyj7MmGY7BRU",
+  "snippet": "The Foundation for Defense of Democracies (FDD) warned that encryption alone cannot adequately protect sensitive data as it moves across cloud platforms,..."
+ },
+ {
+  "id": "a9dc398095",
+  "title": "The humans burning out on AI's cyber frontlines",
+  "source": "Axios",
+  "date": "2 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESggEB6zswFQN6FFC1-s12BO2jWAhMJFBCStDEbxeia-mZDEfqt-q__GskoGCNTp-5jJyxGUu67gpMYXQbc2BIT72BTgL40a0eNSY-xEJHEoJugykbVjA0smgOwG0b8EHvN7vBTpe7jhyD3WAMkI-bx-Rq2JzQQr9KkivzixnlGIYghNjH",
+  "snippet": "The people at the frontlines of the ongoing barrage of AI-enabled cyberattacks are being pummeled with attacks, vulnerabilities and false alarms."
+ },
+ {
+  "id": "c3f48dbac0",
+  "title": "HHS’ Office for Civil Rights Settles Ransomware Investigation of Lehigh Valley Health Network",
+  "source": "HHS.gov",
+  "date": "14 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESpAEB6zswFVEmyGzj8nXwyj4945abqqrTGhDFUKCekqftBvbtUg_ZDIGN7sBlXSZJ9VqTlgCuN1W73g1ebqD8vpvCWWZYnP3FF_6j2nDP4K2Gad8LJVwtKRzoxeBZ_Lo9r1QJCkKNakvWJ8XodbWzdof8QvwZLrPNNZNSXsxMNieZNxDLEf7dSss1bamYGK7XwPytYQyFIO2BKumQhLnXcObx72N_qg",
+  "snippet": "Settlement Marks OCR's 22nd Ransomware Enforcement Action. WASHINGTON, D.C. — OCTOBER 29, 2026 — The United States Department of Health and Human Services..."
+ },
+ {
+  "id": "98e2cd14e5",
+  "title": "Bernalillo offers $82,000 to hackers to resolve ransomware attack",
+  "source": "KOAT",
+  "date": "58 minutes ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESmgEB6zswFXtCy4pYKTJZiv8lcA8sxHTAFEkPmhfzYBUZSDZSu0QVrjxHcQ9tFIht2rTc8lbbbG-DfmHS9Yp3ry3HUvyu2uoJ5l3b_ilyPIYdcb513nEzBsm8IuZrQ5JhKmWMWL3_1f7CIOzWrVwTlxzSfR5ddQWjYY9AScGKpM5bNjHKaQFra88HI235-bbgfH_Hg5T8vpc6NSC-",
+  "snippet": "The town of Bernalillo has approved an $82000 offer to hackers in an effort to end a ransomware attack that has disrupted municipal services since..."
+ },
+ {
+  "id": "ebe1164a05",
+  "title": "AI Gives Ransomware Negotiators a New Edge in Haggling With Hackers",
+  "source": "Bloomberg.com",
+  "date": "2 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESmAEB6zswFcK9vfjs2XokVxnxbf9DK2F9dJ2H7hNzfCA2xv6RDnpiwQuq2SE06okgg8b1vP2Se-XzBmgwWRVHZUJDyDbrrV_8hDkVsCScvJZWcYasPFJC1eqO2MFh_YmFdz4zrXsvPq1GFMNlTaBOAsr1uY_wmSi2NP1byq3RBclbgJ5-eZcu5Y7vpS77iDk-olaAGlKaGIxWmA",
+  "snippet": "Hackers have tells, too. AI is analyzing past negotiations to help cybersecurity experts spot them and resolve haggling faster."
+ },
+ {
+  "id": "8e76708f12",
+  "title": "Compliance Theater Won’t Stop an AI Data Breach. Do This Instead.",
+  "source": "Cybersecurity Insiders",
+  "date": "4 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESoQEB6zswFebPbUi4IBW5-PBPmXnEOSwKsoUO106IkoFeD4dgpIUJf3Ih1K8mIphMjX0_XjITcZaX6ceY3wjT2lIwr6qnfVFVamUUfauTQJ_SOTUhY4z1Y-sEhBPpJrBefh8VyNmtCMxPfbnr_NgD2AclwDFXLViE3t7-odTe8mtd_URumgPZ7PwGjEpKE9sPHs43u2exb_h4A-XBPP2G8M_SIA",
+  "snippet": "AI is evolving at a rapid pace, and the uptake of Generative AI (GenAI) is revolutionising the way humans interact and leverage this technology. GenAI is."
+ },
+ {
+  "id": "a9236d0343",
+  "title": "Former employees sue J.B. Hunt in claimed data breach",
+  "source": "The Arkansas Democrat-Gazette",
+  "date": "18 hours ago",
+  "first": "2026-10-30T11:27+01:00",
+  "link": "https://www.google.com/goto?url=CAESmAEB6zswFeEEW94JKzNbsj_rN8N8eA0yFjDf105fUdVG3GIw2Q6toV41mx5Xz-KuDqz-IEig1rYUGM3zXlmrDaxdp9A3EkRlC6Na4zuXx0aqmAIqWDNwkQUK5Oy_5dIi-zMrx3vlXEyoC0Cqi2cZUfT9Vi7AIu3z9be9lQhF_M2DR1xabfiO_i8xBP4CzrOhq4Re10tx7aYYwQ",
+  "snippet": "Three former J.B. Hunt employees sued the company in federal court this week claiming a data breach put the personal information of thousands of workers at..."
+ },
+ {
   "id": "ec05aed699",
   "title": "EXCLUSIVE: Pentagon treating military base freezer malfunctions as suspected cyberattack, officials say",
   "source": "Reuters",
